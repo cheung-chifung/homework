@@ -1,0 +1,179 @@
+\documentclass[a4paper,11pt]{jsarticle}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{amssymb}
+\usepackage{ascmac}
+\usepackage{subfigure}
+\usepackage{bm}
+\usepackage{setspace}
+\usepackage{cases}%左かっこつけるときに必要だった
+\usepackage{leftidx}%行列表示用？
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{url}
+\usepackage{bm}
+
+\setlength{\headsep}{5mm}
+\setlength{\oddsidemargin}{-0.5zw} %→にズラす
+\setlength{\textheight}{37\baselineskip}
+\addtolength{\textheight}{\topskip}
+\setlength{\topmargin}{-10mm}
+\setlength{\textwidth}{45zw} %文章の幅
+\setlength{\textheight}{215mm}
+\setlength{\parindent}{1zw}%箇条書きの一文字下げ
+\pagestyle{fancy}
+
+\newtheorem{theorem}{定理}
+\newtheorem{prop}[theorem]{命題}
+\newtheorem{lemma}[theorem]{補題}
+\newtheorem{cor}[theorem]{系}
+\newtheorem{example}[theorem]{例}
+\newtheorem{definition}[theorem]{定義}
+\newtheorem{rem}[theorem]{注意}
+\newtheorem{guide}[theorem]{参考}
+\renewcommand{\proofname}{証明}
+
+\numberwithin{theorem}{section}  % 定理番号を「定理2.3」のように印刷
+\numberwithin{equation}{section} % 式番号を「(3.5)」のように印刷
+\newcommand{\argmax}{\mathop{\rm arg~max\,}\limits}
+\newcommand{\argmin}{\mathop{\rm arg~min\,}\limits}
+\newcommand{\st}{\mathop{\rm subject~to\,}\limits}
+\newcommand{\sign}{\mathop{\rm sign\,}\limits}
+
+\newcommand{\dom}{\mathop{\mathrm{\bf dom}}\nolimits}
+\newcommand{\minimize}{\mathop{\mathrm{\rm minimize}}\limits}
+
+
+\lhead{2012年度数理計画特論・第二回レポート}
+\chead{}
+\rhead{12M42340}
+\lfoot{チョウ　シホウ}
+\cfoot{\thepage}
+\rfoot{6月11日}
+\renewcommand{\footrulewidth}{0.4pt}
+\title{2012年度数理計画特論・第二回レポート}
+\author{12M42340　チョウ　シホウ}
+\date{6月11日}
+
+\begin{document}
+\pagenumbering{roman}
+%\tableofcontents
+%\cleardoublepage
+\pagenumbering{arabic}
+\renewcommand{\thepart}{\arabic{part}}
+
+%\thispagestyle{empty}
+
+\section{問題1：解答}
+
+\begin{enumerate}
+\item 問題文のラグランジュ問題
+\[
+\begin{split}
+\minimize &\,\,\,\,  \sum_{i \in M} \sum_{j \in N} c_{ij}x_{ij} + \sum_{j \in N} f_j y_j + \sum_{i \in M} u_i(1-\sum_{j\in N}x_ij)\\
+\text{subject to} &\,\,\,\,  x_{ij} \le y_j \,\, (i \in M, j \in N),\\
+&\,\,\,\,  x_{ij} \ge 0  \,\, (i \in M, j \in N),\\
+&\,\,\,\,  y_j \in \{0,1\} \,\, (j \in N)
+\end{split}
+\]
+を次のように$N$個の子問題に割り当てられる．
+子問題（$j$）
+\[
+\begin{split}
+\minimize &\,\,\,\, \sum_{i \in M} c_{ij}x_{ij} + f_jy_j - \sum_{i \in M} u_i x_{ij} \\
+\text{subject to} &\,\,\,\,  x_{ij} \le y_j \,\, (i \in M, j \in N),\\
+&\,\,\,\,  x_{ij} \ge 0  \,\, (i \in M, j \in N),\\
+&\,\,\,\,  y_j \in \{0,1\} \,\, (j \in N)
+\end{split}
+\]
+{\bf 子問題$1$：}
+\[
+\begin{split}
+\minimize &\,\,\,\, (3-6)x_{11} + (6-3)x_{21} + (4-5)x_{31} + (6-4)x_{41} +8y_1\\
+\text{subject to} &\,\,\,\,  x_{i1} \le y_1 \,\, (i \in M),\\
+&\,\,\,\,  x_{i1} \ge 0  \,\, (i \in M),\\
+&\,\,\,\,  y_1 \in \{0,1\}
+\end{split}
+\]
+\begin{itemize}
+\item $y_1 = 0$の時，$\forall i \in M, x_{i1}=0$，最小値$0$である．
+\item $y_1 = 1$の時，$\forall i \in M, 0 \le x_{i1} \le 1,x_{11} = \min \{-3,0\} = -3, x_{21} = \min \{3,0\} = 0, x_{31} = \min \{-1,0\} = -1, x_{41} = \min \{2,0\} = 0$，最小値は$-3+0-1+0+8=4$である．
+\end{itemize}
+従って，子問題$1$の最小値は$\min \{ 0,4 \} = 0$，最適解は$x_{11}=x_{21}=x_{31}=_{41}=0,y_1=0$である．同様に，子問題$2,3$はそれぞれ：\\\\
+{\bf 子問題$2$}
+\[
+\begin{split}
+\minimize &\,\,\,\, (8-6)x_{12} + (2-3)x_{22} + (1-5)x_{32} + (2-4)x_{42} +5y_1\\
+\text{subject to} &\,\,\,\,  x_{i2} \le y_2 \,\, (i \in M),\\
+&\,\,\,\,  x_{i2} \ge 0  \,\, (i \in M),\\
+&\,\,\,\,  y_2 \in \{0,1\}
+\end{split}
+\]
+最適解は$x_{12}=0,x_{22}=-1,x_{32}=-4,x_{42}=-2,y_2=1$，最適値は$-2$である．\\
+
+{\bf 子問題$3$}
+\[
+\begin{split}
+\minimize &\,\,\,\, (1-6)x_{13} + (3-3)x_{23} + (8-5)x_{33} + (5-4)x_{43} +9y_1\\
+\text{subject to} &\,\,\,\,  x_{i3} \le y_3 \,\, (i \in M),\\
+&\,\,\,\,  x_{i3} \ge 0  \,\, (i \in M),\\
+&\,\,\,\,  y_3 \in \{0,1\}
+\end{split}
+\]
+最適解は$x_{13}=x_{23}=x_{33}=_{43}=0,y_3=0$，最適値は$0$である\\
+
+従って，緩和問題の最適値は$0-2+0=-2$である．
+
+
+\item
+\item
+\item
+\end{enumerate}
+
+\section{問題２：解答}
+次の線形計画問題
+\begin{equation}
+\begin{split}
+\minimize &\,\,\,\, \bm{c}^T\bm{x}\\
+\text{subject to} &\,\,\,\,  \bm{Ax} \ge \bm{b}, \\
+&\,\,\,\,  \bm{Cx} = \bm{d}\\
+&\,\,\,\,  \bm{x} \ge \bm{0}
+\end{split}
+\end{equation}
+とその双対問題
+\begin{equation}
+\begin{split}
+\minimize &\,\,\,\, \bm{b}^T\bm{y_1} + \bm{d}^T\bm{y_2}\\
+\text{subject to} &\,\,\,\,  \bm{A}^T \bm{y_1} + \bm{C}^T \bm{y_2} \le \bm{c} \\
+&\,\,\,\,  \bm{y_1} \ge \bm{0},\\
+&\,\,\,\,  \bm{y_2} \text{は実数}
+\end{split}
+\end{equation}
+を考え．次のラグランジュ緩和をとると
+\begin{equation}
+L()
+\end{equation}
+
+
+\section{問題３：解答}
+\section{問題４：解答}
+\begin{enumerate}
+\item
+整数非負問題
+\[
+X=\{ y \in \mathbb{Z}_+^4 | 4y_1 + 5y_2 + 9y_3 + 12y_4 \le 34 \}
+\]
+とするとき，不等式$y_2+y_3+2y_4 > 6$が成り立つと仮定すると．
+\[
+y_2,y_3,y_4 \in \mathbb{Z}_+^4,\,\, 5y_2 + 5y_3 + 10y_4 \ge 31
+\]
+\item
+\end{enumerate}
+
+
+
+
+\end{document}

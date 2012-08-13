@@ -1,0 +1,112 @@
+\documentclass[a4paper,11pt]{jsarticle}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{amssymb}
+\usepackage{ascmac}
+\usepackage{subfigure}
+\usepackage{bm}
+\usepackage{setspace}
+\usepackage{cases}%左かっこつけるときに必要だった
+\usepackage{leftidx}%行列表示用？
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{url}
+\usepackage{bm}
+\usepackage{verbatim}
+\usepackage{calc}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+\setlength{\headsep}{5mm}
+\setlength{\oddsidemargin}{-0.5zw} %→にズラす
+\setlength{\textheight}{37\baselineskip}
+\addtolength{\textheight}{\topskip}
+\setlength{\topmargin}{-10mm}
+\setlength{\textwidth}{45zw} %文章の幅
+\setlength{\textheight}{215mm}
+\setlength{\parindent}{1zw}%箇条書きの一文字下げ
+\pagestyle{fancy}
+
+\newtheorem{theorem}{定理}
+\newtheorem{prop}[theorem]{命題}
+\newtheorem{lemma}[theorem]{補題}
+\newtheorem{cor}[theorem]{系}
+\newtheorem{example}[theorem]{例}
+\newtheorem{definition}[theorem]{定義}
+\newtheorem{rem}[theorem]{注意}
+\newtheorem{guide}[theorem]{参考}
+\renewcommand{\proofname}{証明}
+
+\numberwithin{theorem}{section}  % 定理番号を「定理2.3」のように印刷
+\numberwithin{equation}{section} % 式番号を「(3.5)」のように印刷
+\newcommand{\argmax}{\mathop{\rm arg~max\,}\limits}
+\newcommand{\argmin}{\mathop{\rm arg~min\,}\limits}
+\newcommand{\st}{\mathop{\rm subject~to\,}\limits}
+\newcommand{\sign}{\mathop{\rm sign\,}\limits}
+
+\newcommand{\dom}{\mathop{\mathrm{\bf dom}}\nolimits}
+\newcommand{\minimize}{\mathop{\mathrm{\rm minimize}}\limits}
+\newcommand{\maximize}{\mathop{\mathrm{\rm maximize}}\limits}
+
+\newcommand{\prox}{\mathop{\mathrm{\rm Prox}}\limits}
+
+\lhead{H24前期・バイオインフォマティクス・最終レポート}
+\chead{}
+\rhead{}
+\lfoot{12M42340 チョウ　シホウ}
+\cfoot{\thepage}
+\rfoot{}
+\renewcommand{\footrulewidth}{0.4pt}
+
+
+\begin{document}
+\pagenumbering{roman}
+%\tableofcontents
+%\cleardoublepage
+\pagenumbering{arabic}
+\renewcommand{\thepart}{\arabic{part}}
+
+%\thispagestyle{empty}
+
+\begin{itembox}[l]{A群}
+ヒトゲノム配列上のSNPについて．及びSNP解析ビジネスの例について
+\end{itembox}
+
+\section{SNPとその解析方法}
+
+ヒトゲノムの解読が進むことによって，私達のDNAの塩基配列は，同じ人であっても個人によってわずかずつ異なっていることが分かってきました．その個人差は，全ゲノム中の0.1\%，数百万箇所あるとされています．ゲノムの個人差にはいろいろなタイプがありますが，そのうち最も頻度が高くて注目されているのが，たった一つの塩基が置き換わったSNP（single nucletide polymorphism，日本語では「1塩基多型」という）です\cite{genome}．SNPは人が病気になりやすいかどうか，薬の効き目が良いかどうか，薬の副作用が起きりやすいかどうかに大きな影響を与えていますので，あらかじめそういったSNPを調べておいてSNPの場所と機能を解明すれば，それぞれに合った薬の使い方ができるようになることが期待されています．しかし，人のゲノムの全体の中に300万から1000万箇所もあると言われていますが．今，それがゲノム上のどこにあるのかを調べる作業が急速に進んでいます．
+
+SNPの従来の検出法として，{\bf RFLP}（Restriction Fragment Length Polymorphism，制限酵素断片長多型）法が用いられました，RFLPとは，制限酵素によって切断されたDNA断片の長さが同一種内の個体間で異なることを検出手法です．しかし，RFLP法の操作が煩雑で時間かかる上，SNP部位近辺の塩基配列によっては解析不可能な場合が多いなど問題が指摘されてきました．
+
+そこで，近年ではより便利で汎用性が高い手法として，{\bf Invader法}，{\bf 一塩伸長法}，{\bf TaqMan PCR法}などの解析方法が開発されました\cite{snp}．
+\begin{enumerate}
+\item
+{\bf Invader法}はDNAの標的部位とオリゴヌクレオチドで形成するフラップ構造を認識して切断してCleavaseを利用して蛍光シグナルを増幅する方法です．Invader法の操作手順が簡便し，高い特異性による正確に解析できます，また，Invader法は専用機器あを必要としないため，設備投資にかかる初期費用が抑えられます．
+
+\item
+{\bf 一塩伸長法}（Single Base Primer Extension）とは，テンプレートDNAのSNP部位の特定の１塩基のプライマーと，蛍光標識したddNTPを加えて1塩基の伸長反応を行うことにより，SNP部位のターゲット塩基に対して相補的なddNTPがプライマーに結合した蛍光標識されたDNA断片を作る手法です．一塩伸長法では１６分間の泳動で複数のSNPsサイトを同時に検出することも可能なので，より多くのSNPsを短時間で検出することができます．
+
+\item
+{\bf Taqman PCR法}は，PCR(Polymerase Chain Reaction)を用い，DNAのある一部分だけを選択的に増幅させ，定量解析によって閾値を超えた蛍光シグナルをリアルタイムで検出する方法です．従来のPCRは，サーマルサイクラー（プログラムにより加熱と冷却を周期的に行いDNAを増幅するPCR装置）で目的DNAを増幅した後，その増幅産物の解析にはアガロースゲルあるいはポリアクリルアミドゲル電気泳動を行い，染色したものを紫外線で検出するという流で行います．一方，Taqman PCR法では，蛍光シグナルが検出されるタイミングが試料中のターゲット核酸の量に依存しますので，その原理を利用してリアルタイムに蛍光シグナルを確認することでターゲット核酸の定量分析が可能になります．また，DNAの増幅と検出を一つのチューブ内で行い，リアルタイムPCRが反応後に煩雑なゲル電気泳動で増幅産物の確認を行う必要がありませんので，簡便，迅速に結果が得られます\cite{realtime pcr}．
+\end{enumerate}
+
+近年，リアルタイムPCRを用いたSNP解析は，多検体で多遺伝子の解析を必要とするケースが増えつつあります．多検体・多遺伝子の解析は，分注操作などの回数が増えてコントロールが煩雑になり，その影響で精度が低下，莫大なコストもかかってしまう傾向にあります．これらの問題点を克服するため，フリューダイム社は従来の定量PCRシステムの限界を突破し，集積流体回路利用した次世代リアルタイムPCRシステム{\bf BioMark System}を開発しました．このシステムは9216反応を一度に解析でき，試薬コストがかなり低下し解析精度も大幅に向上しました．
+
+\section{SNP解析ビジネスの例}
+SNP解析を用いるビジネスで最も盛んで行っているのは，創薬とオーダーメイド医療です．従来の新薬開発では，莫大をお金と時間を投入しなければいかない，新薬が出来上がっても，誰にでも同じように効くとは限りません．しかし，SNP解析によって，創薬標的分子を調べ，それらをターゲットすると効率よく新薬を開発するのは可能になります．
+
+一方，SNP解析を用いて患者個人の体質や遺伝的特徴を充分考慮したうえで，オーダーメイド医療も実現できます．SNPの診断によって，治療と費用対効果の両方の面で有効性があるかどうかを証明する必要があります．ネビラピン\cite{ordermade} に対する研究では，SNPの診断を行うことで１病院当たりの医療費が年間約６万ドル（約５００万円）も削減できます．
+
+SNP解析方法の進化と伴い，個人向けの遺伝子解析サービスの提供も可能になってきます．この業界をリードするのは，米国にて2006年4月に設立した"23andMe"社です．"23andMe"社は最先端なSNPジェノタイピング技術を利用し，遺伝子検査サービスを提供しています．自分の遺伝情報を知りたいユーザーは，オンラインで検査キットを購入（399ドル/回）し，送られてきたきっとを用いて，口腔内のつばをチューブに入れ，キットを送り返すれば．4～6週以降に特定疾患に将来罹るリスクや薬に対する副作用のリスクのどの自分の遺伝情報を見えます．
+
+
+\begin{thebibliography}{99}
+\bibitem{genome} 京都大学 加藤研究室 \url{http://www.zinbun.kyoto-u.ac.jp/~kato/atgenome/index.html}
+\bibitem{snp} Wikipedia 「1塩基多型」 \url{http://ja.wikipedia.org/wiki/%E4%B8%80%E5%A1%A9%E5%9F%BA%E5%A4%9A%E5%9E%8B}
+\bibitem{realtime pcr} リアルタイムPCR : その原理と特徴，小島 夫美子;  岩谷 良則;  藤本 秀士 (2003-09)，九州大学医学部保健学科紀要	vol. 2 p. 95-102 
+\bibitem{ordermade} 独立行政法人　理化学研究所，RIKEN NEWS 7 No.361 July 2011
+\end{thebibliography}
+\end{document}

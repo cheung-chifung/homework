@@ -1,0 +1,192 @@
+\documentclass{jsarticle}
+\topmargin=-3.0cm \oddsidemargin=0.1cm \evensidemargin=0.1cm
+\textwidth=16 true cm \textheight=27 true cm
+\setlength{\textheight}{250mm}
+
+\usepackage{amsmath, amssymb}
+\usepackage{fancybox,ascmac}
+
+\begin{document}
+\title{2012年度金融工学・第四回レポート}
+\author{{\normalsize 社会理工学研究科　経営工学専攻　チョウ シホウ　学籍番号 12M42340}}
+\date{}
+\maketitle
+
+\def \Pr{{\rm Pr}}
+
+
+\baselineskip 0.6cm
+
+\begin{itembox}[l]{問題6-3-1}
+Fatou's lemmaに於いて，等号が成立しない様な関数列の例を作れ．
+\end{itembox}
+{\bf 解答：}
+
+Fatou's lemmaは非負可測関数しか適用できないことを基に次の例を構成する\\
+$(\mathcal{S},\mathcal{B},\mu)$は$[0,+\infty)$上の測度空間，$\mathcal{B}$はボレルσ-algebra，$\mu$はレベーク測度、すべての自然数$n$に対して$f_n$を次に定義する
+\[
+f_n(x) = \begin{cases}
+\frac{1}{n} & \text{\,\,\,\,\,\, for $x \in [n,2n]$}, \\
+0 & \text{\,\,\,\,\,\,otherwise}
+\end{cases}
+\]
+
+関数$f_n$は$\mathcal{S}$から$0$に一様収束し、すべての$x \le 0,n > 0$に対しては$f_n(x)=0$だが、すべての$f_n$の積分が$1$であるので、
+\[
+0 = \mu(\liminf_n f_n) = \int_{\mathcal{S}} \liminf_{n \to \infty} f_n d\mu < \liminf_{n \to \infty} \int_{\mathcal{S}} f_n d\mu =  \liminf_n \mu(f_n)  = 1
+\]
+
+等式が成立しない。
+\begin{itembox}[l]{問題6-3-2}
+\begin{enumerate}
+\item Reverse Fatou's lemmaを証明し，等号の成立しない例を作れ．
+\item $\mu(g) < + \infty$ の条件が満たされない場合に，上の不等式が成立しなくなる様な例を作れ．
+\end{enumerate}
+\end{itembox}
+{\bf 解答：}
+\begin{enumerate}
+\item
+$\exists g, \forall n \in \mathbb{N}, \mu(g) < + \infty, f_n \le g$ので，関数列$h_n=(g-f_n)$とおき，$\forall{h_n}_{n\in \mathbb{N}} \subset (m\mathcal{B})^+$ので，Fatou's lemmaを適用できる，
+\begin{equation*}
+\mu(\liminf_n (g-f_n)) \le \liminf_n \mu(g-f_n)
+\end{equation*}
+また，$\liminf_n (-f_n) = -\limsup_n f_n$より，不等式の左辺は，
+\begin{equation*}
+\begin{split}
+\mu(\liminf_n (g-f_n)) &=\,\,\, \mu(g + \liminf_n (- f_n)) \\
+&=\,\,\, \mu(g)  + \mu(\liminf_n (-f_n))\\
+&=\,\,\, \mu(g) + \mu(-\limsup_n f_n)\\
+&=\,\,\, \mu(g) - \mu(\limsup_n f_n)
+\end{split}
+\end{equation*}
+に変形できる．一方，不等式の右辺は
+\begin{equation*}
+\begin{split}
+\liminf_n \mu(g-f_n) &=\,\,\, \liminf_n (\mu(g)-\mu(f_n))\\
+&=\,\,\, \mu(g) + \liminf_n(-\mu(f_n))\\
+&=\,\,\, \mu(g) - \limsup_n \mu(f_n)\\
+\end{split}
+\end{equation*}
+になるので．両辺$\mu(g)$を引く，不等式の向きを逆にすれば，
+\begin{equation*}
+ \limsup_n \mu(f_n) \le  \mu(\limsup_n f_n)
+\end{equation*}
+次は，反例一個を挙げる：
+$\mathcal{S}$を$\mathbb{R}$上の測度空間に定義し、関数列$f_n\in \mathbb{N}$を
+\[
+f_n(x) = \begin{cases}
+-\frac{1}{n} & \text{\,\,\,\,\,\, for $x \in [n,2n]$}, \\
+0 & \text{\,\,\,\,\,\,otherwise}
+\end{cases}
+\]
+とおくと、可積分関数$g(x)=0$が存在し、$\forall n \in \mathbb{N}, f_n \le g$ので,非負列$(g-f_n)$が上記の例により等式が成り立たないので、逆向きのFatou's lemmaの等式も成立しない。
+\[
+0 = \limsup_{n \to \infty} \mu(f_n) = \limsup_{n \to \infty} \int_{\mathcal{S}} f_n d\mu < \int_{\mathcal{S}} \limsup_{n \to \infty} f_n d\mu = \mu( \limsup_{n \to \infty} f_n) = 1
+\]
+
+\item 前の証明を考え，$\mu(g)>+\infty$が成り立たない場合，両方$\mu(g)$を引くと不等式が必ず満たさないので，上の不等式が成り立たない．
+
+下記の反例を考え，
+\[
+f_n(x) = x^2
+\]
+$\forall g, \mu(g) = + \infty$ので，不等式が成り立たない
+
+\end{enumerate}
+
+\begin{itembox}[l]{問題6-4-1}
+命題6.4.1(線形性)を証明せよ
+\end{itembox}
+{\bf 解答：}
+$f,g$を下から近似する次の非負単関数の列$f_n,g_n$を考え，
+\begin{equation*}
+\begin{split}
+\{f_n\}_{n \in \mathbb{N}}  = & \sum_{i=1}^n a_i 1_{A_i}(x) \to f \\
+\{g_m\}_{m \in \mathbb{N}} = & \sum_{j=1}^m b_j 1_{B_j}(x) \to g
+\end{split}
+\end{equation*}
+すると
+\begin{equation*}
+\begin{split}
+&\,\,\, \mu(\alpha f_n + \beta g_n) \\
+=&\,\,\, \mu \Bigr( \alpha \sum_{i=1}^n a_i 1_{A_i}(x)+ \beta \sum_{j=1}^m b_j 1_{B_j}(x) \Bigr)\\
+=&\,\,\, \mu \Bigr( \alpha\sum_{i=1}^n a_i 1_{A_i}(x) \Bigr) + \mu \Bigr( \beta  \sum_{j=1}^m b_j 1_{B_j}(x)\Bigr),\,\,\,\,\text{非負単関数の加法性より}\\
+=&\,\,\, \alpha \mu( \sum_{i=1}^n a_i 1_{A_i}(x)) +  \beta \mu(\sum_{j=1}^m b_j 1_{B_j}(x)),\,\,\,\,\text{非負単関数の正斉次性より}\\
+=&\,\,\, \alpha \mu(f_n) + \beta \mu(g_m) \\
+\end{split}
+\end{equation*}
+単調収束定理より，
+\begin{equation*}
+\mu(f_n) \to \mu(f),\,\, \mu(g_m) \to \mu(g),\,\,\mu(\alpha f_n + \beta g_m) \to \mu(\alpha f + \beta g)
+\end{equation*}
+
+\begin{itembox}[l]{問題6-5-1}
+$ f  \in \mathcal{L}'(\mathcal{S},\mathcal{B},\mu),g_n = f1_{[-n,n]},h_n = \min (f,n)$と定める時，
+\begin{equation*}
+\mu(|f-g_n|) \to 0
+\end{equation*}
+\begin{equation*}
+\mu(|f-h_n|) \to 0
+\end{equation*}
+の成立を示せ．
+\end{itembox}
+{\bf 解答：}
+\begin{itemize}
+\item $n \to \infty$の時，$g_n$は$f$に近似しているので，$g_n \to f$である．明らかに，$| f_n | \le | f |$，また，$\forall f \in m \mathcal{B} \Rightarrow \mu(|f|) < +\infty $ので，優収束定理より，
+\begin{equation}
+\mu(|f_n - f|) \to 0
+\end{equation}
+が成立である．
+\item $h_n = \min(f,n)$ので，$n \to \infty$の時，$h_n$は$f$に近似しているので，$h_n \to f$である．なお，$\exists f'=|f|, |f_n| \ge f',\mu(f') < + \infty$にので，優収束定理より，
+\begin{equation}
+\mu(|h_n - f|) \to 0
+\end{equation}
+が成立である．
+\end{itemize}
+
+\begin{itembox}[l]{問題7-1-1}
+Markovの不等式を証明せよ．
+\end{itembox}
+{\bf 解答：}
+$I_A$特性確率関数を次のように定義する，
+\begin{equation*}
+I_A = 
+\begin{cases}
+1,\,\,\,\text{Aが起きる}\\
+0,\,\,\,\text{Aが起きらない}
+\end{cases}
+\end{equation*}
+する．明らかに，$I_{X \ge c} \le X$が成立，$g > 0$，ゆえに
+\begin{equation*}
+\begin{split}
+g(c)P(\{ w | X(w) \ge c \}) &= \,\,\, g(c)E(I_{X(w)\ge c};\{ w| X(w) \ge c \})\\
+&\le \,\,\, g(c)E(X;\{ w| X(w) \ge c \})\\
+&= \,\,\, E(g\circ X;\{ w| X(w) \ge c \})
+\end{split}
+\end{equation*}
+が成り立つ．また，$\{g\circ X|\{ w| X(w) \ge c \}\} \subseteq \{ g\circ X\}$ので，期待値の線形性による
+\begin{equation}
+E(g\circ X;\{ w| X(w) \ge c \}) \le E(g\circ X) \\
+\end{equation}
+
+\begin{itembox}[l]{添付問題}
+次の不等式をMarkovの不等式から証明せよ．$\forall \theta >0, \forall c \in \mathbb{R}, \forall Y \in m\mathcal{F}$
+\begin{equation*}
+P(\{w|Y(w)>c\}) \le e^{-c\theta}E[e^{\theta Y}]
+\end{equation*}
+\end{itembox}
+{\bf 解答：}
+$g(c)=e^{c\theta}$とおくと，$(g \circ Y)(c) = e^{\theta Y(c)}$である．また，Markovの不等式により，
+\begin{equation}
+\begin{split}
+g(c)P(\{w|Y(w) > c\}) &\,\,\,= e^{c\theta}P(\{w|Y(w) > c\})\\
+&\,\,\, \le E(g \circ Y; \{ w|Y(w) > c \})\\
+&\,\,\, \le E(g \circ Y) \\
+&\,\,\, = E(e^{\theta Y})
+\end{split}
+\end{equation}
+が成り立つ，$c>0,\theta>0 \Rightarrow e^{c\theta}>0$ので
+\begin{equation}
+P(\{w|Y(w) > c\})  \le e^{-c\theta}E(e^{\theta Y})
+\end{equation}
+\end{document}

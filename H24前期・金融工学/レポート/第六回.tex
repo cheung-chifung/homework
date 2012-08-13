@@ -1,0 +1,138 @@
+\documentclass{jsarticle}
+\topmargin=-3.0cm \oddsidemargin=0.1cm \evensidemargin=0.1cm
+\textwidth=16 true cm \textheight=27 true cm
+\setlength{\textheight}{250mm}
+
+\usepackage{amsmath, amssymb}
+\usepackage{fancybox,ascmac}
+
+\begin{document}
+\title{2012年度金融工学・第六回レポート}
+\author{{\normalsize 社会理工学研究科　経営工学専攻　チョウ シホウ　学籍番号 12M42340}}
+\date{}
+\maketitle
+
+\def \Pr{{\rm Pr}}
+
+
+\baselineskip 0.6cm
+
+\begin{itembox}[l]{6月1日・練習問題1}
+$\{w_t\}$は1-dimのBM．
+\begin{enumerate}
+\item $X_t := e^{\frac{t}{2}}\cos w_t$がマルチンゲールであることを示せ．（伊藤の公式を使う）．
+\item $x > 0, x_t = (x^{\frac{1}{3}} + \frac{1}{3} w_t)^3$が満たすSDEを導け．
+\end{enumerate}
+\end{itembox}
+
+\begin{enumerate}
+\item
+各項の微分を取る
+\begin{eqnarray*}
+\frac{dX_t}{dt} &=& \frac{1}{2}e^{\frac{t}{2}}\cos w_t - e^{\frac{t}{2}}\sin w_t dw_t = \frac{1}{2}e^{\frac{t}{2}}\cos w_t \\
+&& \text{\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,（伊藤のルールより}dw_t dt = 0\text{）} \\
+\frac{dX_t}{dw_t} &=& -e^{\frac{t}{2}}\sin w_t \\
+\frac{d^2 X_t}{dw_t^2} &=& \frac{d^2 X_t}{dt} = -e^{\frac{t}{2}}\cos w_t \\
+\end{eqnarray*}
+すると
+\[
+dX_t = \frac{1}{2}e^{\frac{t}{2}}\cos w_t dt -e^{\frac{t}{2}}\sin w_t dw_t - \frac{1}{2}e^{\frac{t}{2}}\cos w_t dt = -e^{\frac{t}{2}}\sin w_t dw_t  \,\,\,\,\,\,\,\,\,\,\,\,\text{（伊藤の公式より）} 
+\]
+\[
+E[dX_t|\mathcal{F}_t] = -e^{\frac{t}{2}}\sin w_t E[ dw_t | \mathcal{F}_t] =0
+\]
+従って，$X_t := e^{\frac{t}{2}}\cos w_t$がマルチンゲールである．
+
+\item
+\begin{eqnarray*}
+\frac{dx_t}{dx} &=& 3(x^{\frac{1}{3}} + \frac{1}{3} w_t)^2 \frac{1}{3} x^{-\frac{2}{3}} = (x^{\frac{1}{3}} + \frac{1}{3} w_t)^2 x^{-\frac{2}{3}} \\
+\frac{dx_t}{dw_t} &=& 3(x^{\frac{1}{3}} + \frac{1}{3} w_t)^2 \frac{1}{3} = (x^{\frac{1}{3}} + \frac{1}{3} w_t)^2\\
+\frac{d^2x_t}{dw_t^2} &=& 2(x^{\frac{1}{3}} + \frac{1}{3} w_t) \frac{1}{3} =  \frac{2}{3}(x^{\frac{1}{3}} + \frac{1}{3} w_t)\\
+\end{eqnarray*}
+伊藤の公式より
+\[
+dx_t = x^{-\frac{2}{3}} (x^{\frac{1}{3}} + \frac{1}{3} w_t)^2 dx + (x^{\frac{1}{3}} + \frac{1}{3} w_t)^2 dw_t + \frac{1}{3}(x^{\frac{1}{3}} + \frac{1}{3} w_t) dw_t^2
+\]
+
+\end{enumerate}
+\newpage
+
+\begin{itembox}[l]{6月8日・練習問題1}
+
+\begin{equation}
+\text{SDE}
+\begin{cases}
+dX_t = \frac{1}{2} \sigma(X_t)\sigma'(X_t)dt + \sigma(X_t)dw_t \\
+X_0 = x_0
+\end{cases}を考え
+\end{equation}
+\begin{enumerate}
+\item $f（x） = \int_{x_0}^x \frac{dy}{\sigma(y)}$として，$(f^{-1})',(f^{-1})''$を計算せよ
+\item (1)の結果を利用して上のSDEを解け．
+\end{enumerate}
+\end{itembox}
+
+\begin{enumerate}
+\item 
+\[dX_t = b(t,X_t)dt + \sigma(t,X_t)dw_t,\,\,\, \sigma = 0 \]
+\[
+dX_t = b(t,X_t)dt \Rightarrow \frac{dX_t}{dt} = b(t,X_t)
+\]
+\[
+dX_t = \frac{1}{2} \sigma(X_t)\sigma'(X_t)dt + \sigma(X_t)dw_t
+\]
+\[
+f(x) = \int_{x_0}^x \frac{dy}{\sigma(y)}
+\]とおくと
+\begin{eqnarray*}
+(f^{-1})'(y) &=& \frac{1}{f'(f^{-1}(y))} = \sigma(f^{-1}(y)) \\
+(f^{-1})''(y) &=& \sigma'(f^{-1}(y))(f^{-1})'(y) \\
+&=& \sigma'(f^{-1}(y))\sigma(f^{-1}(y))
+\end{eqnarray*}
+\item
+伊藤の公式より，$X_t=f^{-1}(w_t + f(x_0))$ので，
+\begin{eqnarray*}
+dX_t &=& df^{-1}(w_t + f(x_0))\\
+&=& (f^{-1})'(w_t + f(x_0))dw_t + \frac{1}{2}(f^{-1})''(w_t + f(x_0))dt\\
+&=& \sigma(f^{-1}(w_t + f(x_0)))dw_t + \frac{1}{2}\sigma'(f^{-1}(w_t + f(x_0)))\sigma(f^{-1}(w_t + f(x_0)))dt\\
+&=& \sigma(X_t)dw_t + \frac{1}{2}\sigma'(X_t)\sigma(X_t)d_t
+\end{eqnarray*}
+従って
+\[
+X_0 = f^{-1}(w_0 + f(x_0)) = x_0 
+\]
+SDEの解である．
+
+\end{enumerate}
+\newpage
+\begin{itembox}[l]{6月8日・練習問題2}
+\begin{equation}
+\text{SDE}
+\begin{cases}
+dX_t = dt + 2\sqrt{X_t} dw_t \\
+X_0 = x_0
+\end{cases}
+\end{equation}
+を解け
+\end{itembox}
+
+$\sigma(x)=2\sqrt{x}$とおく，
+\[
+dX_t = dt + 2\sqrt{X_t} dw_t,\,\,\, \sigma'(x)=\frac{1}{\sqrt{x}},\,\,\, \sigma\sigma'(x)=2
+\]
+によると
+\[
+dX_t = \frac{1}{2}\sigma(X_t)\sigma'(X_t)dt + \sigma(X_t)dw_t
+\]
+伊藤の公式により，
+\begin{eqnarray*}
+f(x) &=& \int_{x_0}^x \frac{dy}{2\sqrt{y}} = \int_{x_0}^x (\sqrt{y})'dy = \sqrt{x} - \sqrt{x_0} \\
+f^{-1}(y) &=& (y + \sqrt{x_0})^2,\,\,\,\,\,\,\,\,\, f(x_0)=0
+\end{eqnarray*}
+従って，
+\[
+X_t = f^{-1}(w_t + f(x_0)) = (w_t + \sqrt{x_0})^2
+\]
+
+
+\end{document}

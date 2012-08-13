@@ -1,0 +1,163 @@
+\documentclass[a4paper,11pt]{jsarticle}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{amssymb}
+\usepackage{ascmac}
+\usepackage{subfigure}
+\usepackage{bm}
+\usepackage{setspace}
+\usepackage{cases}%左かっこつけるときに必要だった
+\usepackage{leftidx}%行列表示用？
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{url}
+\usepackage{bm}
+\usepackage{verbatim}
+\usepackage{calc}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+\setlength{\headsep}{5mm}
+\setlength{\oddsidemargin}{-0.5zw} %→にズラす
+\setlength{\textheight}{37\baselineskip}
+\addtolength{\textheight}{\topskip}
+\setlength{\topmargin}{-10mm}
+\setlength{\textwidth}{45zw} %文章の幅
+\setlength{\textheight}{215mm}
+\setlength{\parindent}{1zw}%箇条書きの一文字下げ
+\pagestyle{fancy}
+
+\newtheorem{theorem}{定理}
+\newtheorem{prop}[theorem]{命題}
+\newtheorem{lemma}[theorem]{補題}
+\newtheorem{cor}[theorem]{系}
+\newtheorem{example}[theorem]{例}
+\newtheorem{definition}[theorem]{定義}
+\newtheorem{rem}[theorem]{注意}
+\newtheorem{guide}[theorem]{参考}
+\renewcommand{\proofname}{証明}
+
+\numberwithin{theorem}{section}  % 定理番号を「定理2.3」のように印刷
+\numberwithin{equation}{section} % 式番号を「(3.5)」のように印刷
+\newcommand{\argmax}{\mathop{\rm arg~max\,}\limits}
+\newcommand{\argmin}{\mathop{\rm arg~min\,}\limits}
+\newcommand{\st}{\mathop{\rm subject~to\,}\limits}
+\newcommand{\sign}{\mathop{\rm sign\,}\limits}
+
+\newcommand{\dom}{\mathop{\mathrm{\bf dom}}\nolimits}
+\newcommand{\minimize}{\mathop{\mathrm{\rm minimize}}\limits}
+\newcommand{\maximize}{\mathop{\mathrm{\rm maximize}}\limits}
+
+\newcommand{\prox}{\mathop{\mathrm{\rm Prox}}\limits}
+
+\lhead{Proximal operators of mixed norms}
+\chead{}
+\rhead{輪読}
+\lfoot{チョウ　シホウ}
+\cfoot{\thepage}
+\rfoot{7月30日}
+\renewcommand{\footrulewidth}{0.4pt}
+\title{Proximal operators of mixed norms}
+\author{12M42340　チョウ　シホウ}
+\date{7月30日}
+
+\begin{document}
+\pagenumbering{roman}
+%\tableofcontents
+%\cleardoublepage
+\pagenumbering{arabic}
+\renewcommand{\thepart}{\arabic{part}}
+
+%\thispagestyle{empty}
+
+\section{Hierarchical $\ell_1$/$\ell_q$-norms}
+\begin{equation}
+\min_{\bm{w} \in \mathbb{R}^p}\,\,\,\, \frac{1}{2} \|\bm{u} - \bm{w}\| + \mu \Omega(\bm{w})
+\end{equation}
+\begin{equation}
+\max_{\bm{v} \in \mathbb{R}^p}\,\,\,\, -\frac{1}{2}\bigr[ \|\bm{u} - \bm{v}\|_2^2 - \|\bm{u}\|^2 \bigr] \text{\,\,\,\,\,\,such that\,\,\,\,}\Omega^*(\bm{v})\le \mu
+\end{equation}
+
+\begin{itembox}[l]{Proximal operator of Hierarchical norms}
+次のノルムを考え：
+$\Omega:\bm{w} \to \sum_{g\in\mathcal{G}}\|\bm{w}_g\|_q,\text{\,\,\,\,with\,\,\,\,}q\in\{2,\infty\}$，$\mathcal{G}$は木構造のグループ集合である．$\preceq$記号を次のように定義する．
+\[
+g_1 \preceq g_2 \Rightarrow \{ g_1 \subseteq g_2 \text{\,\,\,or\,\,\,} g_1 \cap g_2 = \emptyset  \}
+\]
+$g_1 \preceq \dots \preceq g_m,\,\,m=|\mathcal{G}|$,
+$\prox_g := \bm{w}_g \mapsto \prox_{\mu\|\cdot\|_q}(\bm{w}_g)$とおくと，Hierarchical $\ell_1$/$\ell_q$-normsのproximal operatorは
+\[
+\prox_{\mu\Omega}=\prox_{g_m}\circ\dots\circ\prox_{g_1}
+\]
+\end{itembox}
+\begin{lemma} $\ell_1,\ell_q$-ノルムの双対ノルムは$\ell_\infty.\ell_{q^*}$-ノルム，$\frac{1}{q}+\frac{1}{q^*}=1$
+\end{lemma}
+\begin{lemma} {\bf 双対問題と最適解条件\\}
+双対問題
+\begin{equation}
+\max_{\bm{\xi}\in \mathbb{R}^{p \times |\mathcal{G}|}} -\frac{1}{2}\Bigr(\| \bm{u} - \sum_{g\in\mathcal{G}} \bm{\xi}^g \|_2^2 - \|\bm{u}\|_2^2 \Bigr)  \text{\,\,\,s.t.\,\,}\forall g\in\mathcal{G},\|\bm{\xi}^g\|_* \le \mu \text{\,\,and\,\,\,}\bm{\xi}_j^g=0 \text{\,\,if\,\,}j\neq g
+\end{equation}
+
+最適解条件
+\begin{equation}
+\begin{cases}
+\bm{w} = \bm{u} - \sum_{g\in \mathcal{G}} \bm{\xi}^g \\
+\forall g \in \mathcal{G},\,\,\, \bm{\xi}^g = \Pi_{\mu}^*(\bm{w}_g + \bm{\xi}^g)
+\end{cases}
+\end{equation}
+\end{lemma}
+
+\begin{algorithm}[H]
+\caption{Block coordinate descent algorithm}
+\label{A1}
+\textbf{\,\,input:\,\,\,\,}$\bm{u}\in\mathbb{R}^p$とグループ集合$\mathcal{G}$\\
+\textbf{\,\,Outputs:\,\,\,\,}$(\bm{w},\bm{\xi})$(主双対最適解)\\
+\textbf{\,\,Initialization:\,\,\,\,}$\bm{w}=\bm{u}, \bm{\xi}=0$\\
+\,\,WHILE (maximum number of iterations not reached) DO\\
+\,\,\,\,\,\,FOR $g\in\mathcal{G}$ DO\\
+\,\,\,\,\,\,\,\,\,\,$\bm{w} \leftarrow \bm{u}- \sum_{h\neq g} \bm{\xi}^h$\\
+\,\,\,\,\,\,\,\,\,\,$\bm{\xi}^g \leftarrow \Pi_{\mu}^*(\bm{w}_g)$\\
+\,\,\,\,\,\,END FOR\\
+\,\,END WHILE\\
+\,\,$\bm{w} \leftarrow \bm{u} - \sum_{g\in \mathcal{G}} \bm{\xi}^g$
+\end{algorithm}
+
+\begin{lemma}
+Alogorithm 1で，任意の$g\in \mathcal{G},h\in \mathcal{G},g \preceq h$に対し，もし$\bm{\xi}^g$を$\bm{\xi}^h$の前に更新すれば，$\bm{\xi}^h$は$\bm{\xi}^g$の最適解条件に影響を与えない．
+\end{lemma}
+
+\begin{algorithm}[H]
+\caption{Practical Computation of the Proximal Operator for $\ell_2$- or $\ell_\infty$-norms.}
+\label{A1}
+\textbf{\,\,input:\,\,\,\,}$\bm{u}\in\mathbb{R}^p$と木構造グループ集合$\mathcal{G}$\\
+\textbf{\,\,Outputs:\,\,\,\,}$(\bm{w})$(主問題最適解)\\
+\textbf{\,\,Initialization:\,\,\,\,}$\bm{w}=\bm{u}$\\
+\,\,\,\,FOR $g\in\mathcal{G}$,following the order $\preceq$ DO\\
+\,\,\,\,\,\,\,\,$\bm{w}_g \leftarrow \bm{w}_g - \Pi_{\|\cdot\|_* \le \mu}(\bm{w}_g) = \prox_{\mu \|\cdot\|_q} (\bm{w}_g)$\\
+\,\,\,\,END FOR
+\end{algorithm}
+\section{Combined $\ell_1+\ell_1$/$\ell_q$-norm(sparse group Lasso)}
+\begin{itembox}[l]{group Lasso}
+データサンプルは$\bm{x}_j \in \mathbb{R}^m,j=1,\dots,n$，辞書（Dictionary）は$\bm{D}\in \mathbb{R}^{m \times p},\bm{D}=[\bm{d}_1,\dots,\bm{d}_p]$，$\bm{x}_j$は$\bm{x}_j = \bm{D}\bm{\alpha}_j + \epsilon$と表せる，$\alpha \in \mathbb{R}^p$は辞書の線形結合重み，$\epsilon \in \mathbb{R}^m$はノイズである．この問題のgroup Lasso解法は
+\begin{equation}
+\min_{\bm{a}} \frac{1}{2}\|\bm{x}_j - \bm{D}\bm{\alpha}\|_2^2 + \mu \Omega_{\mathcal{G}}(\bm{\alpha})
+\end{equation}
+\end{itembox}
+この問題に対するのHierarchical Lassoは
+\begin{equation}
+\min_{\bm{a}} \frac{1}{2}\|\bm{x}_j - \bm{D}\bm{\alpha}\|_2^2 + \mu_1 \Omega_{\mathcal{G}}(\bm{\alpha}) + \mu_2 \|\bm{\alpha}\|_1
+\end{equation}
+
+\section{Overlapping $\ell_1$/$\ell_\infty$-norms}
+overlapがあるが木構造のないグラーフ集合のProximal operatorを算出するのは難しいだが，$q=\infty$だけは効率的に計算できる．
+
+\begin{thebibliography}{99}
+\bibitem{jenatton} R. Jenatton, J. Mairal, G. Obozinski, and F. Bach, "Proximal methods for sparse hierarchical dictionary learning," Proc. ICML, 2010. 
+\bibitem{jenatton} Proximal Methods for Sparse Hierarchical Dictionary Learning: Supplementary Materials\\\url{http://www.di.ens.fr/~jenatton/paper/SupplementaryMaterialsICML2010.pdf}
+\bibitem{l1lqball} S. Sra, Fast Projections onto $\ell_{1,q}$-Norm Balls for Grouped Feature Selection Lecture Notes in Computer Science, 2011, Volume 6913, Machine Learning and Knowledge Discovery in Databases, Pages 305-317
+
+\end{thebibliography}
+\end{document}

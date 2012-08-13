@@ -1,0 +1,238 @@
+\documentclass{jsarticle}
+\topmargin=-3.0cm \oddsidemargin=0.1cm \evensidemargin=0.1cm
+\textwidth=16 true cm \textheight=25 true cm
+
+\usepackage{otf}
+\usepackage{amsmath,amssymb}
+
+\begin{document}
+\title{2012年度数理計画法特論・第一回レポート}
+\author{{\normalsize 社会理工学研究科　経営工学専攻　チョウ シホウ　学籍番号 12M42340}}
+\date{}
+\maketitle
+
+
+\baselineskip 0.7 cm
+
+{\bf 問題1}
+\begin{enumerate}
+\item 線形相補問題は次の問題とは同じ：
+\begin{eqnarray}
+\text{min \,\,\,\,\,} && z(Mz+q)\\
+\text{s.t. \,\,\,\,\,} && Mz +q \ge 0\\
+&& z \ge 0
+\end{eqnarray}
+この最適化問題は混合整数線形問題（MILP）に定着できる：
+\begin{eqnarray}
+\text{min \,\,\,\,\,} && a\\
+\text{s.t. \,\,\,\,\,} && 0 \le a(Mz+q) \le k \label{milp1}\\
+&& 0 \le az \le e-k \label{milp2}\\
+&&0 \le a \le 1  \\
+&&e = (1,1,\dots,1)^T \in \mathbb{R}^n \\
+&& k \in \{0,1\}^n
+\end{eqnarray}
+$\forall i = 1,2,\dots,n,k_i \in \{0,1\},0 \le az_i \le 1-k_i,0 \le a(Mz+q)_i \le k_i$の制約がある。\\
+最適解$(z^*,k^*,a^*)$が存在すれば、それが線形相補性条件を満たすことを示す。
+\begin{enumerate}
+\item $a* > 0$の時：$k_i^*=1$ならば（\ref{milp2}）により$z_i=0$、$k_i^*=0$ならば（\ref{milp1}）により$(Mz+q)_i=0$、両方でも$z_i^*(Mz+q)_i=0$を満たす。
+\item $a^*=0$の時：$z=0$と$Mz+q=0$が同時に成り立たないので、$k_i^*=1$ならば$(Mz+q)_i>0,z^*_i=0$、$k_i^*=0$ならば$(Mz+q)_i =0, z^*_i>0$、同じく$z_i^*(Mz+q)_i=0$を満たす。
+\end{enumerate}
+最適解があればすべての$i$に対して$z_i^*(Mz+q)_i=0$が成立なので、線形相補性条件$z(Mz+q)=\sum_{i}^n z_i(Mz+q)_i =0$を満たす。
+
+\item 
+ジョブ$j$がジョブ$k$より優先ならば$y_{jk}=1$、そうではなければ$y_{jk}=0$。$M$は大きい人工変数。
+\begin{eqnarray}
+\text{min \,\,\,\,\,} && \sum_{j=1}^n w_jC_j\\
+\text{s.t. \,\,\,\,\,}&& C_j \ge p_j, \forall j \in \{1,2,..,n\} \label{c_a}\\
+&& C_j \ge 0, \forall j \in \{1,2,..,n\}  \label{c_b} \\
+&& C_j + p_k \le C_k + M(1-y_{jk}), \forall j,k \in \{1,2,..,n\} , j<k \label{c_1} \\
+&& C_k + p_j \le C_j + My_{jk},  \forall j,k \in \{1,2,..,n\} , j<k \label{c_2} \\
+&& y_{jk} \in \{0,1\}, \forall j,k \in \{1,2,..,n\} , j<k
+\end{eqnarray}
+制約条件（\ref{c_1}）（\ref{c_2}）により
+\begin{enumerate}
+\item $y_{jk}=1$ならば、ジョブ$j$がジョブ$k$より優先、$C_j + p_k \le C_k$
+\item $y_{jk}=0$ならば、ジョブ$k$がジョブ$j$より優先、$C_k + p_j \le C_j$
+\end{enumerate}
+制約条件（\ref{c_a}）（\ref{c_b}）と組み合わせすると、最適解が存在すれば、
+\[
+\text{ジョブ$j$の完了時刻：}C_j = p_j + \sum_{a,b \in \{1,2,..,n\} ,a < b} y_{ab}p_b
+\]
+が必ず成立。
+\item 
+区分線形関数$f$は単調増加であれば、$\lambda_i$変数で区分線形関数を区分によりモデル化できる。$k_i$が区分$i$の上界以上であれば$\lambda_i=1$、そうではなければ$\lambda_i=0$。
+\begin{eqnarray}
+\text{min \,\,\,\,\,}&& c^Tx+y_i \\
+\text{s.t. \,\,\,\,\,}&& Ax=b \\
+&&x \ge 0\\
+&&x_1 = \sum_{i=1}^m k_i \label{dsplit}\\
+&& y_1 = \sum_{i=1}^{m-1} \lambda_i k_i \frac{f(p_{i+1})-f(p_{i})}{p_{i+1}-p_i} \label{ddelta}\\
+&& \lambda_{i+1} \ge \lambda_i, \forall i \in \{1,2,\dots,m-1\} \label{dorder}\\
+&& \lambda_i \in \{0,1\}, \forall i \in \{1,2,\dots,m-1\} \\
+&& k_i \le \lambda_i(p_{i+1}- p_{i}), \forall i \in \{1,2,\dots,m-1\} \label{do1} \\
+&& \lambda_{i-1}(p_{i+1} - p_{i}) \le k_i, \forall i \in \{2,3,\dots,m \} \label{do2}
+\end{eqnarray}
+\end{enumerate}
+制約条件（\ref{dsplit}）により、$x_1$を$m$個の$k_i$に分割できる、（\ref{ddelta}）により、$f(p_i)$と$\lambda_i$の組み合わせで$f(x_1)$を表せる。（\ref{dorder}）（\ref{dorder}）（\ref{dorder}）により、$\lambda_{i-1}(p_{i+1} - p_{i}) \le k_i \le \lambda_i(p_{i+1}- p_{i})$、$k_i$が$x_i$の区分に定められる。
+
+{\bf 問題2}
+
+主問題(1)を問題文の双対問題のような形に変換する、$I$は単位行列である。
+\begin{equation*}
+\begin{split}
+\text{max\,\,\,\,\,}& c^Tx \\
+\text{s.t.\,\,\,\,\,}&
+\begin{bmatrix}
+A^T  & I
+\end{bmatrix}
+^Tx \le
+\begin{bmatrix}
+b \\
+e
+\end{bmatrix}
+\\
+&x \ge 0
+\end{split}
+\end{equation*}
+すると、その双対性を使って次の双対問題に等価変換できる。
+\begin{equation*}
+\begin{split}
+\text{min\,\,\,\,\,}&
+\begin{bmatrix}
+b \\
+e
+\end{bmatrix}^T
+\begin{bmatrix}
+p \\
+q
+\end{bmatrix}
+\\
+\text{s.t.\,\,\,\,\,}&
+\begin{bmatrix}
+A^T  & I
+\end{bmatrix}
+\begin{bmatrix}
+p \\
+q
+\end{bmatrix}
+\ge
+c
+\\
+& \begin{bmatrix}
+p \\
+q
+\end{bmatrix} \ge 0
+\end{split}
+\end{equation*}
+この問題は下記のと同じである。
+\begin{equation*}
+\begin{split}
+\text{min\,\,\,\,\,}& b^Tp + e^Tq \\
+\text{s.t.\,\,\,\,\,}&
+A^Tp + q \ge c \\
+& p \ge 0, q \ge 0
+\end{split}
+\end{equation*}
+
+
+
+{\bf 問題3}\\
+元問題の制約を1-tree制約に緩和する。\\
+\begin{center}
+\begin{tabular}{c| c c c c c c}
+& $a$ & $b$ & $c$ & $d$ & $e$ & $f$ \\
+\hline
+$a$ & $0$ & $12$ & $7$ & $13$ & $5$ & $4$ \\
+$b$ & $12$ & $0$ & $6$ & $9$ & $7$ & $11$ \\
+$c$ & $7$ & $6$ & $0$ & $4$ & $2$ & $7$ \\
+$d$ & $13$ & \textcircled{$9$} & \textcircled{$4$} & $0$ & $6$ & $10$ \\
+$e$ & \textcircled{$5$} & $7$ & \textcircled{$2$} & $6$ & $0$ & $7$ \\
+$f$ & \textcircled{$4$} & \textcircled{$11$} & $7$ & $10$ & $7$ & $0$ \\
+\end{tabular}
+\end{center}
+上界：巡回路になるという条件の元で、枝の重みが小さいものから順に加える。その閉路は$a \rightarrow f \rightarrow b \rightarrow d \rightarrow c \rightarrow e \rightarrow a$、枝の重みの総和は$4+11+9+4+2+5=35$\\
+\begin{center}
+\begin{tabular}{c| c c c c c c}
+& $a$ & $b$ & $c$ & $d$ & $e$ & $f$ \\
+\hline
+$a$ & $0$ & $12$ & $7$ & $13$ & $5$ & $4$ \\
+$b$ & $12$ & $0$ & \textcircled{$6$} & $9$ & $7$ & $11$ \\
+$c$ & $7$ & $6$ & $0$ & $4$ & $2$ & $7$ \\
+$d$ & $13$ & $9$ & \textcircled{$4$} & $0$ & $6$ & $10$ \\
+$e$ & \textcircled{$5$} & $7$ & \textcircled{$2$} & $6$ & $0$ & $7$ \\
+$f$ & \textcircled{$4$} & $11$ & \textcircled{$7$} & $10$ & $7$ & $0$ \\
+\end{tabular}
+\end{center}
+下界：一つの頂点を固定して1-treeを作る。頂点$a$を選び、残ったグラフで枝の重みの総和が最小の全域木は$(b,c),(c,f),(c,e),(c,d)$であり、頂点$a$に接続する重みが最小の二つ枝$(a,e),(a,f)$をその全域木に加える。下界は$(6+7+2+4)+(4+5)=28$
+
+
+{\bf 問題4}\\
+\begin{eqnarray}
+\text{min \,\,\,\,\,} && c^Tx \\
+\text{s.t. \,\,\,\,\,} && A_ix \le b_i \,\,\,\,\, (i = 1,2,\dots,k) \\
+&& x \in \mathbb{Z}_+^n
+\end{eqnarray}
+元問題の$c=\sum_{i=1}^k c_i$であり、$x=\sum_{i=1}^k x_i$とおくと
+\begin{eqnarray}
+c^Tx &=& (c_1 + c_2 + \dots + c_k)^Tx\\
+&=& (c_1^T + c_2^T + \dots + c_k^T)(x_1 + x_2 + \dots + x_k)\\
+&=& \sum_{i=1}^k\sum_{j=1}^k c_ix_j
+\end{eqnarray}
+なお、制約条件$A_ix \le b_i, \,\,\, (i=1,2,\dots,k)$は
+\begin{eqnarray*}
+&A_1x_1 + A_1x_2 + \dots + A_1x_k \le b_1& \\
+&A_2x_1 + A_2x_2 + \dots + A_2x_k \le b_2 &\\
+&\vdots&\\
+&A_kx_1 + A_kx_2 + \dots + A_kx_k \le b_k &\\
+\end{eqnarray*}
+すると、元問題は次の問題とは同じである。
+\begin{eqnarray}
+\text{min \,\,\,\,\,} && \sum_{i=1}^k \sum_{j=1} c_i^Tx_j \\
+\text{s.t. \,\,\,\,\,} && A_i\sum_{j=1}^k x_j \le b_i \,\,\,\,\, (i = 1,2,\dots,k) \\
+&& x_i \in \mathbb{Z}_+^n \,\,\,\,\, (i = 1,2,\dots,k)
+\end{eqnarray}
+この問題に二つの制約条件を追加すれば、新しい問題ができる。
+\begin{eqnarray}
+\text{min \,\,\,\,\,} && \sum_{i=1}^k \sum_{j=1} c_i^Tx_j \\
+\text{s.t. \,\,\,\,\,} && A_i\sum_{j=1}^k x_j \le b_i \,\,\,\,\, (i = 1,2,\dots,k) \\
+&& A_ix_j =0 \,\,\,\,\, (\forall i\in \{1,2,\dots,k\}, j\in \{1,2,\dots,k\};i \neq j) \\
+&& c_ix_j =0 \,\,\,\,\, (\forall i\in \{1,2,\dots,k\}, j\in \{1,2,\dots,k\};i \neq j) \\
+&& x_i \in \mathbb{Z}_+^n \,\,\,\,\, (i = 1,2,\dots,k)
+\end{eqnarray}
+次のように等価変換できる。
+\begin{eqnarray}
+\text{min \,\,\,\,\,} && \sum_{i=1}^k c_i^Tx_i \\
+\text{s.t. \,\,\,\,\,} && A_ix_i \le b_i \,\,\,\,\, (i = 1,2,\dots,k) \\
+&& x_i \in \mathbb{Z}_+^n \,\,\,\,\, (i = 1,2,\dots,k)
+\end{eqnarray}
+変数$x_i$は互いに独立であるので、この緩和問題は変数$x_i$ごとに独立して$k$個の整数計画問題に分解でき、元問題より解きやすい、ある意味の緩和問題である。元問題の最適解が存在する十分必要条件KKT条件は
+\begin{eqnarray}
+\begin{cases}
+\alpha_i \ge 0 \,\,\,\,\, (i = 1,2,\dots,k)\\
+b_i - A_i\sum_{j=1}^k x_j \ge 0 \,\,\,\,\, (i = 1,2,\dots,k) \\
+\alpha_i^T(b_i - A_i\sum_{j=1}^k x_j) =0 \,\,\,\,\, (i = 1,2,\dots,k) \\
+\sum_{j=1}^k c_j^T - \sum_{i=1}^k \alpha_i^T A_i =0 \\
+x_i \in \mathbb{Z}_+^n \,\,\,\,\, (i = 1,2,\dots,k)
+\end{cases}
+\end{eqnarray}
+緩和問題のKKT条件は
+\begin{eqnarray}
+\begin{cases}
+\alpha_i \ge 0 \,\,\,\,\, (i = 1,2,\dots,k)\\
+b_i - A_ix_i \ge 0 \,\,\,\,\, (i = 1,2,\dots,k) \\
+\alpha_i^T(b_i - A_i x_j) =0 \,\,\,\,\, (i = 1,2,\dots,k) \\
+c_i^T - \alpha_i^T A_i =0 \,\,\,\,\, (i = 1,2,\dots,k) \\
+A_ix_j =0 \,\,\,\,\, (\forall i\in \{1,2,\dots,k\}, j\in \{1,2,\dots,k\};i \neq j) \\
+c_ix_j =0 \,\,\,\,\, (\forall i\in \{1,2,\dots,k\}, j\in \{1,2,\dots,k\};i \neq j) \\
+x_i \in \mathbb{Z}_+^n \,\,\,\,\, (i = 1,2,\dots,k)
+\end{cases}
+\end{eqnarray}
+明らかに、緩和問題の最適解$x_i^*$が存在すれば元問題の最適解$x^*=\sum_{i=1}^k x_i$も存在する、逆は成立しない、元問題の実行可能解集合$X$と緩和問題の実行可能解集合$\bar{X}$の関係は$\bar{X} \subset X$。\\
+%一方、変数$x_i$ごとに独立する整数計画問題$XP_i$
+%\begin{eqnarray}
+%\text{min \,\,\,\,\,} && c_i^Tx_i \\
+%\text{s.t. \,\,\,\,\,} && A_ix_i \le b_i \\
+%&& x_i \in \mathbb{Z}_+^n
+%\end{eqnarray}
+%を考えるみると、$x_i>0,x=\sum_{i=}^k x_i$ので、元問題が最適解$x_i^*$があれば、任意の個々の整数計画問題$XP_i$の最適解$x_i^*<x^*$である、また、問題$XP_i$が実行可能ならば、元問題も実行可能である
+\end{document}

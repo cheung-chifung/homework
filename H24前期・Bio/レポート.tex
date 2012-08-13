@@ -1,0 +1,165 @@
+\documentclass[a4paper,11pt]{jsarticle}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{amssymb}
+\usepackage{ascmac}
+\usepackage{subfigure}
+\usepackage{bm}
+\usepackage{setspace}
+\usepackage{cases}%左かっこつけるときに必要だった
+\usepackage{leftidx}%行列表示用？
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{url}
+\usepackage{bm}
+\usepackage{verbatim}
+\usepackage{calc}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+\setlength{\headsep}{5mm}
+\setlength{\oddsidemargin}{-0.5zw} %→にズラす
+\setlength{\textheight}{37\baselineskip}
+\addtolength{\textheight}{\topskip}
+\setlength{\topmargin}{-10mm}
+\setlength{\textwidth}{45zw} %文章の幅
+\setlength{\textheight}{215mm}
+\setlength{\parindent}{1zw}%箇条書きの一文字下げ
+\pagestyle{fancy}
+
+\newtheorem{theorem}{定理}
+\newtheorem{prop}[theorem]{命題}
+\newtheorem{lemma}[theorem]{補題}
+\newtheorem{cor}[theorem]{系}
+\newtheorem{example}[theorem]{例}
+\newtheorem{definition}[theorem]{定義}
+\newtheorem{rem}[theorem]{注意}
+\newtheorem{guide}[theorem]{参考}
+\renewcommand{\proofname}{証明}
+
+\numberwithin{theorem}{section}  % 定理番号を「定理2.3」のように印刷
+\numberwithin{equation}{section} % 式番号を「(3.5)」のように印刷
+\newcommand{\argmax}{\mathop{\rm arg~max\,}\limits}
+\newcommand{\argmin}{\mathop{\rm arg~min\,}\limits}
+\newcommand{\st}{\mathop{\rm subject~to\,}\limits}
+\newcommand{\sign}{\mathop{\rm sign\,}\limits}
+
+\newcommand{\dom}{\mathop{\mathrm{\bf dom}}\nolimits}
+\newcommand{\minimize}{\mathop{\mathrm{\rm minimize}}\limits}
+\newcommand{\maximize}{\mathop{\mathrm{\rm maximize}}\limits}
+
+\newcommand{\prox}{\mathop{\mathrm{\rm Prox}}\limits}
+
+\lhead{H24前期・バイオインフォマティクス・最終レポート}
+\chead{}
+\rhead{}
+\lfoot{12M42340 チョウ　シホウ}
+\cfoot{\thepage}
+\rfoot{}
+\renewcommand{\footrulewidth}{0.4pt}
+
+
+\begin{document}
+\pagenumbering{roman}
+%\tableofcontents
+%\cleardoublepage
+\pagenumbering{arabic}
+\renewcommand{\thepart}{\arabic{part}}
+
+%\thispagestyle{empty}
+
+\begin{itembox}[l]{B群}
+配列のペアワイズなローカルアライメント．対象はDNAでもアミノ酸配列でも可．
+\end{itembox}
+次の仕様でLocal alignment algorithmを実装した．
+\begin{itemize}
+\item MATCH\_AWARD = 2，DISMATCH\_PENALTY = -1，GAP\_PENALTY = -1，はそれぞれmatch，unlatch，gapの採点
+\item m,nはそれぞれ文字列sa，sbの長さ，sa[i]，sb[j]はそれぞれsa，sbの要素
+\item scoreは採点行列$H$，pointerは最適方向行列
+\end{itemize}
+
+\section{アルゴリズム}
+\begin{enumerate}
+\item 初期化：\\
+$H(i,0)=0, 0 \le i \le m;\,\,\,\, H(0,j)=0, 0 \le j \le n$\\
+$\text{max score}=0$
+\item 採点行列$H$と最適方向行列$D$を計算（各$(i,j),1\le i\le m, 1\le j \le n $）：\\
+d=match/unmatchの時$H(i-1,j-1)$を加点・ペナルティした点数；\\
+l=delectionの時の$H(i-1,j)+\text{GAP\_PENALTY}$；\\
+u=insertionの時の$H(i,j-1)+\text{GAP\_PENALTY}$\\
+$H(i,j)=$MAX(d,l,u,0)\\
+$D(i,j)=$高い点数の方向，優先順位は対角，上（insertion），左（delection），点数が0ならばストップ\\
+max scoreを更新する，max scoreの位置を記録する．
+\item trace back\\
+max scoreの位置から最適方向行列$D$で記録した方向を用いて文字列を生成する，
+\end{enumerate}
+
+\section{テスト例}
+テスト用文字列はそれぞれwikipediaと配布資料\#3 Sequene Alignmentの例である．
+\begin{itemize}
+\item
+入力：文字列sa,sb
+\item
+出力：採点行列$H$，最適アライメントの座標表示，最高点数，最適アライメントの文字列
+\end{itemize}
+\newpage
+\begin{enumerate}
+\item
+\begin{verbatim}
+# input
+sa="ACACACTA"
+sb="AGCACACA"
+# output
+[[  0.   0.   0.   0.   0.   0.   0.   0.   0.]
+ [  0.   2.   1.   2.   1.   2.   1.   0.   2.]
+ [  0.   1.   1.   1.   1.   1.   1.   0.   1.]
+ [  0.   0.   3.   2.   3.   2.   3.   2.   1.]
+ [  0.   2.   2.   5.   4.   5.   4.   3.   4.]
+ [  0.   1.   4.   4.   7.   6.   7.   6.   5.]
+ [  0.   2.   3.   6.   6.   9.   8.   7.   8.]
+ [  0.   1.   4.   5.   8.   8.  11.  10.   9.]
+ [  0.   2.   3.   6.   7.  10.  10.  10.  12.]]
+cell(8,8):diagonal
+cell(7,7):left
+cell(6,7):diagonal
+cell(5,6):diagonal
+cell(4,5):diagonal
+cell(3,4):diagonal
+cell(2,3):diagonal
+cell(1,2):up
+cell(1,1):diagonal
+max score:12
+result:
+A-CACACTA
+AGCACAC-A
+\end{verbatim}
+\item
+\begin{verbatim}
+# input
+sa="GCTCGTTG"
+sb="AACCGTAA"
+# output
+[[ 0.  0.  0.  0.  0.  0.  0.  0.  0.]
+ [ 0.  0.  0.  0.  0.  0.  0.  0.  0.]
+ [ 0.  0.  0.  0.  0.  0.  0.  0.  0.]
+ [ 0.  0.  2.  1.  2.  1.  0.  0.  0.]
+ [ 0.  0.  2.  1.  3.  2.  1.  0.  0.]
+ [ 0.  2.  1.  1.  2.  5.  4.  3.  2.]
+ [ 0.  1.  1.  3.  2.  4.  7.  6.  5.]
+ [ 0.  0.  0.  2.  2.  3.  6.  6.  5.]
+ [ 0.  0.  0.  1.  1.  2.  5.  5.  5.]]
+cell(6,6):diagonal
+cell(5,5):diagonal
+cell(4,4):diagonal
+cell(3,3):left
+cell(2,3):diagonal
+max score:7
+result:
+CTCGT
+C-CGT
+\end{verbatim}
+\end{enumerate}
+\end{document}

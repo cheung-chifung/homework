@@ -1,0 +1,346 @@
+\documentclass[a4paper,11pt]{jsarticle}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{amssymb}
+\usepackage{ascmac}
+\usepackage{subfigure}
+\usepackage{bm}
+\usepackage{setspace}
+\usepackage{cases}%左かっこつけるときに必要だった
+\usepackage{leftidx}%行列表示用？
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{url}
+\usepackage{bm}
+\usepackage{verbatim}
+\usepackage{calc}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+\setlength{\headsep}{5mm}
+\setlength{\oddsidemargin}{-0.5zw} %→にズラす
+\setlength{\textheight}{37\baselineskip}
+\addtolength{\textheight}{\topskip}
+\setlength{\topmargin}{-10mm}
+\setlength{\textwidth}{45zw} %文章の幅
+\setlength{\textheight}{215mm}
+\setlength{\parindent}{1zw}%箇条書きの一文字下げ
+\pagestyle{fancy}
+
+\newtheorem{theorem}{定理}
+\newtheorem{prop}[theorem]{命題}
+\newtheorem{lemma}[theorem]{補題}
+\newtheorem{cor}[theorem]{系}
+\newtheorem{example}[theorem]{例}
+\newtheorem{definition}[theorem]{定義}
+\newtheorem{rem}[theorem]{注意}
+\newtheorem{guide}[theorem]{参考}
+\renewcommand{\proofname}{証明}
+
+\numberwithin{theorem}{section}  % 定理番号を「定理2.3」のように印刷
+\numberwithin{equation}{section} % 式番号を「(3.5)」のように印刷
+\newcommand{\argmax}{\mathop{\rm arg~max\,}\limits}
+\newcommand{\argmin}{\mathop{\rm arg~min\,}\limits}
+\newcommand{\st}{\mathop{\rm subject~to\,}\limits}
+\newcommand{\sign}{\mathop{\rm sign\,}\limits}
+
+\newcommand{\dom}{\mathop{\mathrm{\bf dom}}\nolimits}
+\newcommand{\minimize}{\mathop{\mathrm{\rm minimize}}\limits}
+\newcommand{\maximize}{\mathop{\mathrm{\rm maximize}}\limits}
+
+\newcommand{\prox}{\mathop{\mathrm{\rm Prox}}\limits}
+
+\lhead{Regularized Dual Averaging}
+\chead{}
+\rhead{総合ゼミ}
+\lfoot{チョウ　シホウ}
+\cfoot{\thepage}
+\rfoot{7月3日}
+\renewcommand{\footrulewidth}{0.4pt}
+\title{Regularized Dual Averaging}
+\author{12M42340　チョウ　シホウ}
+\date{7月3日}
+
+\begin{document}
+\pagenumbering{roman}
+%\tableofcontents
+%\cleardoublepage
+\pagenumbering{arabic}
+\renewcommand{\thepart}{\arabic{part}}
+
+\thispagestyle{empty}
+\maketitle
+
+\begin{abstract}
+今回は論文\cite{RDA}によって提案されたRegularized Dual Averaging（正則化付き双対平均法）を紹介する．
+\end{abstract}
+
+\section{導入}
+\subsection{Regularized Stochastic Learning Problem}
+Regularized stochastic learning（正則化付き確率的学習）問題とは
+\begin{equation}
+\minimize_{\bm{w} \in \mathbb{R}^n} \,\,\, \{ \phi(\bm{w}):= \mathbb{E}_{z}f(\bm{w},z) + \Psi(\bm{w})\}
+\label{BASEPROB}
+\end{equation}
+ただし，$\bm{z}=(\bm{x},y)$はある未知な分布に従う入力・出力データペア．$f(\bm{w},z)$は$\bm{w}$と$x$を利用して$y$を予測する損失関数（Loss function）である．なお，次の幾つの仮定を満たされば，最適解を求められる．
+\begin{itemize}
+\item $\Psi(\bm{w})$が閉凸関数.
+\item $\dom \Psi = \{\bm{w} \in \mathbb{R}^n | \Psi(\bm{w}) < +\infty \}$が閉集合.
+\item $f(\bm{w},z)$が凸かつ$\dom \Psi$における劣微分可能.
+\end{itemize}
+
+損失関数$f(\bm{w}, z)$の例：
+\begin{itemize}
+\item Least-squares :\,\,\, $x \in \mathbb{R}^n, y\in \mathbb{R}$,and $f(\bm{w},(\bm{x},y)) = \| y - \bm{w}^\intercal \bm{x} \|_2^2 )$
+\item Hinge loss:\,\,\, $x \in \mathbb{R}^n,y \in \{+1, -1 \}$,and $f(\bm{w},(\bm{x},y)) = \max\{0, 1-y(\bm{w}^\intercal \bm{x}) \}$
+\item Logistic regression:\,\,\, $x \in \mathbb{R}^n, y \in \{+1, -1 \}$,and $f(\bm{w},(\bm{x},y)) = \log (1+\exp(-y(\bm{w}^\intercal \bm{x})))$
+\end{itemize}
+
+正則化項（regularization term）$\Psi(\bm{w})$の例：
+\begin{itemize}
+\item $\ell_1$-regularization : \,\,\, $\Psi(\bm{w})=\lambda\|\bm{w}\|, \lambda > 1$．
+\item $\ell_2$-regularization : \,\,\, $\Psi(\bm{w})=\frac{\sigma}{2}\|\bm{w}\|_2^2,\sigma >0$.
+\item Convex Constraints : \,\,\, $\Psi(\bm{w})=\begin{cases}
+0 & \bm{w} \in C　\\
++ \infty & otherwise
+\end{cases}$
+\end{itemize}
+
+
+\subsection{一般的なアプローチ}
+一般的なアプローチは，有限な独立観測値列$z_1,z_2.\dots,z_T$を用いて$\phi(\bm{w})$の期待値を近似する．
+\begin{equation}
+\minimize_{\bm{w}\in\mathbb{R}^n} \,\,\, \frac{1}{T} \sum_{t=1}^T f(\bm{w},z_t) + \Psi(\bm{w})
+\label{TRADMETHOD}
+\end{equation}
+しかし，汎用アルゴリズムを用いて式\eqref{TRADMETHOD}を直接に解くのは難しい，問題\eqref{BASEPROB}を効率よく解くためにRegularized Dual Averaging(RDA)が提案されていた．RDAの本質とは
+\[\text{\textbf{Regularization} + \textbf{Stochastic Gradient} + \textbf{Dual Averaging} + \textbf{Shrinking}}\]
+の組み合せアルゴリズムである．
+
+\section{Stochastic Gradient Descent(SGD)}
+\subsection{Online Learning}
+オンライン学習とは，データを1つづつ読み込んで、それまでの学習結果を更新すること．正則化なし損失関数$\min f(\bm{w},z)$に対するのオンライン学習最適化を用いたアルゴリズムは次である．
+\begin{algorithm}[H]
+\caption{Online Learning Algorithm}
+\label{OLA}
+\textbf{initialize:} 初期点$\bm{w}_1$を求める．\\
+\textbf{for} $t=1,2,3,\dots,$ \textbf{do}
+\begin{enumerate}
+\item 時刻$t$に於ける，入力・出力ペア$z_t$と$\bm{w}_t$を用いて損失関数$f(\bm{w}_t,z_t)$を計算．
+\item ステップ１の$\bm{w}_t$を利用して予測を行い，予測が間違うならば$\bm{w}_{t+1}$を更新する．
+\end{enumerate}
+\end{algorithm}
+間違ったら損失が増加する，オンライン学習の目標は累積損失やRegretなどの評価関数を最小化すること．
+
+\subsection{Regularized online optimization}
+正則化付きオンライン最適化は，次のRegret関数
+\begin{equation}
+R_t(\bm{w}) := \sum_{\tau=1}^t (f_{\tau}(\bm{w}_{\tau}) + \Psi(\bm{w}_{\tau})) - \sum_{\tau=1}^t (f_{\tau}(\bm{w}) + \Psi(\bm{w})) 
+\label{REGRET}
+\end{equation}
+を使う．
+
+\subsection{Stochastic Gradient Descent}
+
+次の正則化関数を考え：$\Psi(\bm{w}) = I_{C}(\bm{w}) + \psi(\bm{w})$，$I_{C}$はhard regularization，$\psi(\bm{w})$はsoft regularization．SGDは
+\begin{equation}
+\bm{w}_{t+1} = \Pi_{C}\bigr( \bm{w}_t - \bm{\alpha}_t(\bm{g}_t + \bm{\xi}_t) \bigr)
+\end{equation}
+である．ただし，$\bm{g}_t \in \partial f(\bm{w}_t,z_t), \bm{\xi}_t \in \partial \Psi(\bm{w}_t)$，$\Pi_C(\bm{w})$は次に定義される関数である．
+\begin{equation}
+\Pi_C(\bm{w}) = \argmin_{\bm{w}' \in C} \| \bm{w} - \bm{w}' \|_2
+\end{equation}
+$\Pi_C(\bm{w}) $をEuclidean Projectionという．
+
+SGDアルゴリズムでは，$\bm{w}_t$と$\phi(\bm{w}_t)$が反復$t$前の情報$\{z_1,z_2,\dots,z_{t-1}\}$に依存する．\eqref{BASEPROB}の最適解$\bm{w}^*$の存在を仮定し，$\phi^* = \phi(\bm{w}^*)$とおくと，
+\[
+\lim_{t\to \infty} \phi(\bm{w}_t) = \phi^*
+\]
+を求めるのはSGDのアプローチである．SGDはオンライン学習版の勾配法である．
+
+SGDはOnline Learningの一種として，収束が早い，大量のメモリを必要としない，新たなデータが来たときに，再学習が容易，機械学習にはよく使われて大規模データにも対応できる，しかし，SGDが正則化付き問題に対して特化していない，もっと効率よく解きたい．
+
+\section{Regularized Dual Averaging}
+
+\subsection{Algorithm}
+\begin{algorithm}[H]
+\caption{Regularized dual averaging(RDA) method}
+\label{RDAA}
+\textbf{input:}
+\begin{itemize}
+\item a strongly convex function $h(\bm{w})$ with modulus $1$ on $\dom \Psi$,and $\bm{w}_0 \in \mathbb{R}^n$,such that
+\begin{equation}
+\bm{w}_0 = \argmin_{\bm{w}} h(\bm{w}) \in \argmin_{\bm{w}} \Psi(\bm{w})
+\end{equation}
+\item a pre-detemined nonnegative and nondecreasing sequence $\beta_t$ for $t \ge 1$
+\end{itemize}
+\textbf{initialize:} $\bm{w}_1 = \bm{w}_0, \bar{\bm{g}}_0 = 0$\\
+\textbf{for} $t=1,2,3,\dots,$ \textbf{do}
+\begin{enumerate}
+\item Given the function $f_t$, compute a subgradient $g_t \in \partial f_t(\bm{w}_t)$
+\item Update the average subgradient $\bar{\bm{g}}_t$
+\begin{equation}
+\bar{\bm{g}}_t = \frac{t-1}{t} \bar{\bm{g}}_{t-1} + \frac{1}{t}\bm{g}_t
+\end{equation}
+\item Compute the next iterate $\bm{w}_{t+1}$:
+\begin{equation}
+\bm{w}_{t+1} = \argmin_{\bm{w}}\Bigr\{\langle \bar{\bm{g}}_t, \bm{w} \rangle + \Psi(\bm{w}) + \frac{\beta_t}{t} h(\bm{w}) \Bigr\} \label{EQU8}
+\end{equation}
+\end{enumerate}
+
+\end{algorithm}
+
+RDAの収束率を保証するために次の不等式を満たす補助関数（auxiliary function）$h(\bm{w})$を定義する，
+\begin{equation}
+h(\alpha\bm{w} + (1-\alpha)\bm{u}) \le \alpha h(\bm{w}) + (1-\alpha)h(\bm{u}) - \frac{\sigma}{2}\alpha(1-\alpha)\| \bm{w} - \bm{u} \|^2
+\end{equation}
+$h$は\textbf{Strongly Convex Function}と呼ばれ，次の性質が成立
+\begin{equation}
+h(\bm{w}) \ge h(\bm{u}) + \langle \bm{s}, \bm{w} - \bm{u} \rangle + \frac{\sigma}{2}\| \bm{w} - \bm{u} \|^2, \,\,\, \forall \bm{s} \in \partial h(\bm{u})
+\end{equation}
+$\sigma>0$を凸性パラメータ（Convexity parameter）という．$\sigma = 0$の場合は一般的な凸とは同じ．
+
+RDAの各反復$t$では
+\begin{itemize}
+\item {\bf ステップ１}：従来の勾配法や劣勾配法と同じ，劣勾配を算出する．
+\item {\bf ステップ２}：平均劣勾配を更新する．
+\item {\bf ステップ３}：RDAで構造した簡単関数を計算し，$\bm{w}_{t+1}$を求める．
+\end{itemize}
+
+$\beta_t = \Theta(\sqrt{t})$の場合，RDAの収束率は
+\begin{equation}
+\mathbb{E} \phi(\bar{\bm{w}}_t) - \phi^* \le \mathcal{O}\Bigr( \frac{G}{\sqrt{t}} \Bigr)
+\end{equation}
+ただし，$G$は$\bm{g}_t$の劣勾配のノルムの上限，$\bar{\bm{w}}_t = \frac{1}{t} \sum_{\tau=1}^t \bm{w}_t$．
+
+\subsection{RDA Methods with General Convex Regularization}
+
+$\sigma =0$の$\Psi(\bm{w})$に対して，$\mathcal{O}(\frac{1}{\sqrt{t}})$の収束率を手に入れるため，次の正数列$\{ \beta_t \}_{t\ge1}$を構造する．
+\begin{equation}
+\beta_t = \gamma\sqrt{t},\,\,\,\,\,\,t=1,2,3,\dots \label{Beta}
+\end{equation}
+
+\begin{enumerate}
+\item \textbf{Nesterov's dual averaging method}\\
+$\Psi(\bm{w})$を凸集合$C$に於ける標示関数に定義する．
+\begin{equation}
+\Psi(\bm{w}) = I_C(\bm{w}) = \begin{cases}
+0 & \,\,\,\,\, \bm{w} \in C\\
++\infty & \,\,\,\,\, otherwise
+\end{cases}
+\end{equation}
+また，$h(\bm{w}) = \frac{1}{2} \|\bm{w}\|_2^2$とおくと，式\eqref{EQU8}は次に変形できる
+\begin{equation}
+\begin{split}
+\bm{w}_{t+1} &= \argmin_{\bm{w}}\Bigr\{\langle \bar{\bm{g}}_t, \bm{w} \rangle + \Psi(\bm{w}) + \frac{\beta_t}{t} h(\bm{w}) \Bigr\} = \argmin_{\bm{w}}\Bigr\{\langle \bar{\bm{g}}_t, \bm{w} \rangle + I_C(\bm{w}) + \frac{\gamma}{2\sqrt{t}} \| \bm{w} \|_2^2 \Bigr\}\\\
+&= \Pi_{C} \Bigr( -\frac{\sqrt{t}}{\gamma}\bar{\bm{g}}_t \Bigr) = \Pi_{C} \Bigr( -\frac{1}{\gamma \sqrt{t}} \sum_{\tau =1}^t \bm{g}_{\tau} \Bigr) \label{NEST2009}
+\end{split}
+\end{equation}
+\eqref{NEST2009}式がNesterov(2009)のsimple dual averagingとは同じである．近似型（closed form）がないが，効率のよい射影関数が存在する．\\
+特に，$C=\{\bm{w} \in \mathbb{R}^n \,\,|\,\, \|\bm{w}\|_1 \le \delta \}, \delta > 0$ならば，正則化項はhard $\ell_1$-regularizationになる．
+\item
+\textbf{Soft $\ell_1$-regularization}\\
+$\Psi(\bm{w})=\lambda\|\bm{w}\|_1, \lambda > 0$と$h(\bm{w})=\frac{1}{2} \| \bm{w} \|_2^2$とおくと，次の
+\begin{equation}
+\bm{w}_{t+1}^{(i)} = \begin{cases}
+0 & \,\,\,\, \text{if} \| \bar{\bm{g}}_t^{(i)} \| \le \lambda, \\
+-\frac{\sqrt{t}}{\gamma}\bigr( \bar{\bm{g}}_t^{(i)} - \lambda \sign (\bar{\bm{g}}_t^{(i)}) \bigr) & \,\,\,\, \text{otherwise},
+\end{cases}\,\,\,\,
+i=1,2,\dots,n
+\end{equation}
+ただし，$\bm{w}>0$ならば$\sign(\bm{w}) = 1$，$\bm{w}\le0$ならば$\sign(\bm{w}) = 0$，
+\end{enumerate}
+\subsection{RDA Methods with Strongly Convex Regularization}
+もし$\Psi(\bm{w})$は$\sigma > 0$のStrongly Convex Functionならば，ある収束率を$\mathcal{O}(\ln t)$に超えないような非負非減少数列$\{\beta_t\}_{t \ge 1}$を構造し，元問題が$\mathcal{O}(\frac{\ln t}{t})$のスピードで収束できる．簡単にするため，$\beta_t = 0$に設定し，$h(\bm{w})$もいらなくなる．
+\begin{enumerate}
+\item \textbf{Mixed $\ell_1$/$\ell_2^2$-regularization}\\
+$\Psi(\bm{w}) = \lambda\|\bm{w}\|_1 + \frac{\sigma}{2}\|\bm{w}\|_2^2,\lambda>0,\sigma>0$とおくと
+\begin{equation}
+\bm{w}_{t+1}^{(i)} = \begin{cases}
+0 & \text{if}\,\|\bar{\bm{g}}_t^{(i)}\| \le \lambda,\\
+-\frac{1}{\sigma}\Bigr( \bar{\bm{g}}_t^{(i)} - \lambda \sign\bigr( \bar{\bm{g}}_t^{(i)} \bigr) \Bigr) & \text{otherwise}\\
+\end{cases}
+\,\,\,\,i=1,2,\dots,n
+\end{equation}
+
+\item \textbf{Kullback-Leibler(KL) divergence regularization} 略
+\begin{comment}
+$\Psi(\bm{w}) = \sigma D_{KL}(\bm{w}\|p)$，$\bm{w}$は標準単体，$p$は確率分布，$\sigma D_{KL}(\bm{w}\|p)$は次のように定義される．
+\begin{equation}
+D_{KL}(\bm{w}\|p) := \sum_{i=1}^n \bm{w}^{(i)}\ln\Bigr( \frac{\bm{w}^{(i)}}{p^{(i)}} \Bigr)
+\end{equation}
+\end{comment}
+
+\end{enumerate}
+
+\section{Regret bounds and convergence rates}
+次は式\eqref{REGRET}に定義された関数$R_t(\bm{w})$の上界下界を求める．便宜上で次の記号を定義する．
+\begin{equation}
+\Delta_t := (\beta_0 - \beta_1)h(\bm{w}_2) + \beta_t D^2 + \frac{L^2}{2} \sum_{\tau = 0}^{t-1} \frac{1}{\sigma\tau + \beta_\tau},\,\,\,\, t=1,2,3,\dots \
+\label{DELTA}
+\end{equation}
+$D$と$L$はある定数，$\sigma$は$\Psi(\bm{w})$の凸性パラメータ，$\{\beta_\tau\}_{\tau=1}^t$はRDAの非負非減少入力数列である．また，収束分析を簡単にするために$\tau=0$の時にも値をとれるような$\beta_0>0$となる$\beta_0$を加える．実は$\beta_0=\beta_1$とおけば，$\eqref{DELTA}$の$(\beta_0 - \beta_1)h(\bm{w}_2)$を消せる．また，$t=1$における$\bm{w}_2$が分かるため，$\Delta_1$も求められる．すべての$D>0$に対して，
+\begin{equation}
+\mathcal{F}_D := \Bigr\{ \bm{w} \in \dom \Psi \,\,\,|\,\,\,\, h(\bm{w}) \le D^2 \Bigr\}
+\end{equation}
+に定める．
+\begin{theorem}
+Algorithm 2で$\{ \bm{w}_\tau \}_{\tau=1}^t $と$\{ \bm{g}_\tau \}_{\tau=1}^t$を生成し，$\exists L$，$\forall t \ge 1,\bm{g}_t$の双対ノルム$\|\bm{g}_t\|_* \le L,$が成り立つならば，
+\begin{equation}
+\forall t\ge1,\,\,\, \forall \bm{w} \in \mathcal{F}_D,\,\,\, R_t(\bm{w}) \le \Delta_t
+\end{equation}
+\end{theorem}
+
+もし正則化関数$\Psi(\bm{w})$の凸性パラメータ$\sigma = 0$ならば，$\beta_0 = \beta_1$とおき，\eqref{Beta}の$\{\beta_t\}_{t\ge 1}$を用いて次の$\Delta_t$を導ける．
+\begin{equation}
+\Delta_t = \gamma \sqrt{t} D^2 + \frac{L^2}{2\gamma}\Bigr( 1+\sum_{\tau=1}^{t-1} \frac{1}{\sqrt{\tau}} \Bigr) \le \gamma \sqrt{t} D^2 + \frac{L^2}{2\gamma} \Bigr( 1+ (2\sqrt{t} -2) \Bigr) \le \Bigr( \gamma D^2 + \frac{L^2}{\gamma} \Bigr)\sqrt{t}
+\end{equation}
+$\Delta_t$を最小化にする$\gamma$は$\gamma^* = \frac{L}{D}$，従って，
+\begin{equation}
+R_t(\bm{w}) \le 2LD\sqrt{t}
+\end{equation}
+
+正則化関数$\Psi(\bm{w})$の$\sigma > 0$の場合，$h(\bm{w})=\frac{1}{\sigma} \Psi(\bm{w})$にし，$\beta_t$によって違う$\Delta_t$を求められる．
+\begin{enumerate}
+\item \textbf{Positive constant sequences}\\
+$\beta_t = \sigma, t\ge 1,\beta_0 = \beta_1$に対し
+\begin{equation}
+\Delta_t = \sigma D^2 + \frac{L^2}{2\sigma}\sum_{\tau=1}^t \frac{1}{\tau} \le \sigma D^2 + \frac{L^2}{2\sigma}(1+\ln t)
+\end{equation}
+
+\item \textbf{The logrithmic sequence}\\
+$\beta_t = \sigma(1+\ln t), t\ge 1, \beta_0=\sigma$に対し
+\begin{equation}
+\Delta_t = \sigma(1+\ln t)D^2 + \frac{L^2}{2\sigma}\Bigr( 1+ \sum_{\tau=1}^{t-1} \frac{1}{\tau + 1 + \ln \tau} \Bigr) \le \Bigr( \sigma D^2 + \frac{L^2}{2\sigma} \Bigr)(1+\ln t)
+\end{equation}
+
+\item \textbf{The zero sequence}\\
+$\beta_t = 0, t\ge 1, \beta_0 = \sigma, h(\bm{w})=\frac{1}{\sigma} \Psi(\bm{w})$に対し
+\begin{equation}
+\Delta_t \le \Psi(\bm{w}_2) + \frac{L^2}{2\sigma}\Bigr( 1+\sum_{\tau=1}^t \frac{1}{\tau} \Bigr) \le \frac{L^2}{2\sigma}(6 + \ln t)
+\end{equation}
+
+\begin{theorem}
+もし問題\eqref{BASEPROB}には最適解$\bm{w}^*$が存在し，$\exists D>0,h(\bm{w}^*) \le D^2$と$\exists L >0, \mathbb{E}\| \bm{g} \|_*^2 \le L^2, \forall \bm{g} \in \partial f(\bm{w},z), \bm{w} \in \dom \Psi$を満たす，すべて$t \ge 1$に対して，
+\begin{equation}
+\bm{E}_{\phi}(\bar{\bm{w}}_t) - \phi(\bm{w}^*) \le \frac{\Delta_t}{t}, \,\,\,\text{where}\,\,\, \bar{\bm{w}}_t = \frac{1}{t}\sum_{\tau=1}^{t} \bm{w}_\tau
+\end{equation}
+\end{theorem}
+
+
+\end{enumerate}
+
+
+
+
+\begin{thebibliography}{99}
+\bibitem{RDA} L. Xiao, "Dual averaging methods for regularized stochastic learning and online optimization," Journal of Machine Learning Research, vol. 11, pp. 2543-2596, Dec. 2010. [Online]. Available:\,\,\,\url{ http://portal.acm.org/citation.cfm?id=1756006.1953017}
+\bibitem{N2009} Yu. Nesterov, Primal-dual subgradient methods for convex problems. Mathematical Programming,120(1):221-259, 2009.
+\bibitem{INTRO-OO} S. Shalev-Shwartz, O. Shamir, N. Srebro, and K. Sridharan, "Stochastic convex optimization," in Proceedings of the Conference on Learning Theory (COLT), 2009. [Online]. Available: \url{http://eprints.pascal-network.org/archive/00005408/}
+\bibitem{iloco} Y. Nesterov, Introductory Lectures on Convex Optimization: A Basic Course (Applied Optimization), 1st ed.    Springer Netherlands.
+\bibitem{nips-t} Steve Wright, NIPS Tutorial, 6 December 2010,\,\,\url{ http://pages.cs.wisc.edu/~swright/nips2010/sjw-nips10.pdf}
+\end{thebibliography}
+\end{document}

@@ -1,0 +1,597 @@
+\documentclass[a4paper,11pt]{jsarticle}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{amssymb}
+\usepackage{ascmac}
+\usepackage{subfigure}
+\usepackage{bm}
+\usepackage{setspace}
+\usepackage{cases}%左かっこつけるときに必要だった
+\usepackage{leftidx}%行列表示用？
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{url}
+\usepackage{bm}
+\usepackage{verbatim}
+\usepackage{calc} 
+
+\setlength{\headsep}{5mm}
+\setlength{\oddsidemargin}{-0.5zw} %→にズラす
+\setlength{\textheight}{37\baselineskip}
+\addtolength{\textheight}{\topskip}
+\setlength{\topmargin}{-10mm}
+\setlength{\textwidth}{45zw} %文章の幅
+\setlength{\textheight}{215mm}
+\setlength{\parindent}{1zw}%箇条書きの一文字下げ
+\pagestyle{fancy}
+
+\newtheorem{theorem}{定理}
+\newtheorem{prop}[theorem]{命題}
+\newtheorem{lemma}[theorem]{補題}
+\newtheorem{cor}[theorem]{系}
+\newtheorem{example}[theorem]{例}
+\newtheorem{definition}[theorem]{定義}
+\newtheorem{rem}[theorem]{注意}
+\newtheorem{guide}[theorem]{参考}
+\renewcommand{\proofname}{証明}
+
+\numberwithin{theorem}{section}  % 定理番号を「定理2.3」のように印刷
+\numberwithin{equation}{section} % 式番号を「(3.5)」のように印刷
+\newcommand{\argmax}{\mathop{\rm arg~max\,}\limits}
+\newcommand{\argmin}{\mathop{\rm arg~min\,}\limits}
+\newcommand{\st}{\mathop{\rm subject~to\,}\limits}
+\newcommand{\sign}{\mathop{\rm sign\,}\limits}
+
+\newcommand{\dom}{\mathop{\mathrm{\bf dom}}\nolimits}
+\newcommand{\minimize}{\mathop{\mathrm{\rm minimize}}\limits}
+\newcommand{\maximize}{\mathop{\mathrm{\rm maximize}}\limits}
+
+\lhead{2012年度数理計画特論・第二回レポート}
+\chead{}
+\rhead{12M42340}
+\lfoot{チョウ　シホウ}
+\cfoot{\thepage}
+\rfoot{6月11日}
+\renewcommand{\footrulewidth}{0.4pt}
+\title{2012年度数理計画特論・第二回レポート}
+\author{12M42340　チョウ　シホウ}
+\date{6月11日}
+
+\begin{document}
+\pagenumbering{roman}
+%\tableofcontents
+%\cleardoublepage
+\pagenumbering{arabic}
+\renewcommand{\thepart}{\arabic{part}}
+
+%\thispagestyle{empty}
+
+\section{問題1：解答}
+\begin{enumerate}
+\item 問題文のラグランジュ問題
+\[
+\begin{split}
+\minimize &\,\,\,\,  \sum_{i \in M} \sum_{j \in N} c_{ij}x_{ij} + \sum_{j \in N} f_j y_j + \sum_{i \in M} u_i(1-\sum_{j\in N}x_{ij})\\
+\text{subject to} &\,\,\,\,  x_{ij} \le y_j \,\, (i \in M, j \in N),\\
+&\,\,\,\,  x_{ij} \ge 0  \,\, (i \in M, j \in N),\\
+&\,\,\,\,  y_j \in \{0,1\} \,\, (j \in N)
+\end{split}
+\]
+を次のように$N$個の子問題に割り当てられる．
+子問題（$j$）
+\[
+\begin{split}
+\minimize &\,\,\,\, \sum_{i \in M} c_{ij}x_{ij} + f_jy_j - \sum_{i \in M} u_i x_{ij} \\
+\text{subject to} &\,\,\,\,  x_{ij} \le y_j \,\, (i \in M, j \in N),\\
+&\,\,\,\,  x_{ij} \ge 0  \,\, (i \in M, j \in N),\\
+&\,\,\,\,  y_j \in \{0,1\} \,\, (j \in N)
+\end{split}
+\]
+{\bf 子問題$1$：}
+\[
+\begin{split}
+\minimize &\,\,\,\, (3-6)x_{11} + (6-3)x_{21} + (4-5)x_{31} + (6-4)x_{41} +8y_1 \\
+\text{subject to} &\,\,\,\,  x_{i1} \le y_1 \,\, (i \in M),\\
+&\,\,\,\,  x_{i1} \ge 0  \,\, (i \in M),\\
+&\,\,\,\,  y_1 \in \{0,1\}
+\end{split}
+\]
+\begin{itemize}
+\item $y_1 = 0$の時，$\forall i \in M, x_{i1}=0$，最小値$0$である．
+\item $y_1 = 1$の時，$\forall i \in M, 0 \le x_{i1} \le 1, $ 
+\[\begin{split}
+\min \{-3,0\} = -3 \Rightarrow x_{11} = 0, &\,\,\, \min \{3,0\} = 0 \Rightarrow x_{21} = 0,\\ \min \{-1,0\} = -1 \Rightarrow x_{31} = 0, &\,\,\, \min \{2,0\} = 0 \Rightarrow x_{41} = 0，
+\end{split}\]
+最小値は$-3+0-1+0+8=4$である．
+\end{itemize}
+従って，子問題$1$の最小値は$\min \{ 0,4 \} = 0$，最適解は$x_{11}=x_{21}=x_{31}=_{41}=0,y_1=0$である．同様に，子問題$2,3$はそれぞれ：\\\\
+{\bf 子問題$2$}
+\[
+\begin{split}
+\minimize &\,\,\,\, (8-6)x_{12} + (2-3)x_{22} + (1-5)x_{32} + (2-4)x_{42} +5y_1\\
+\text{subject to} &\,\,\,\,  x_{i2} \le y_2 \,\, (i \in M),\\
+&\,\,\,\,  x_{i2} \ge 0  \,\, (i \in M),\\
+&\,\,\,\,  y_2 \in \{0,1\}
+\end{split}
+\]
+最適解は$x_{12}=0,x_{22}=1,x_{32}=1,x_{42}=1,y_2=1$，最適値は$-2$である．\\
+
+{\bf 子問題$3$}
+\[
+\begin{split}
+\minimize &\,\,\,\, (1-6)x_{13} + (3-3)x_{23} + (8-5)x_{33} + (5-4)x_{43} +9y_1\\
+\text{subject to} &\,\,\,\,  x_{i3} \le y_3 \,\, (i \in M),\\
+&\,\,\,\,  x_{i3} \ge 0  \,\, (i \in M),\\
+&\,\,\,\,  y_3 \in \{0,1\}
+\end{split}
+\]
+最適解は$x_{13}=x_{23}=x_{33}=_{43}=0,y_3=0$，最適値は$0$である\\
+
+従って，
+$\bm{u}$における最適解$\bm{X}^*$は
+\[
+\bm{X}^* = \begin{pmatrix}
+0 & 0   & 0\\
+0 & 1 & 0\\
+0 & 1 & 0\\
+0 & 1 & 0\\
+\end{pmatrix}
+\]
+緩和問題の最適値は$0- 2+0 + \sum_{i \in M} u_i = 16 $である．
+\item
+上記の問題の最適解$\bm{X}^*$を用いて$\bm{u} = (6,3,5,4)$における劣勾配を算出する．\\
+\[
+\bm{b} = \begin{pmatrix}
+1 \\ 1 \\ 1 \\ 1\\
+\end{pmatrix} \,\,\,
+\bm{A} = \begin{pmatrix}
+1 \\ 1 \\ 1
+\end{pmatrix}
+\,\,\,\,
+\bm{X}^* = \begin{pmatrix}
+0 & 0   & 0\\
+0 & 1 & 0\\
+0 & 1 & 0\\
+0 & 1 & 0\\
+\end{pmatrix}
+\,\,\,
+\bm{u} = \begin{pmatrix}
+6 \\ 3 \\ 5 \\ 4
+\end{pmatrix}
+\]に対して，
+劣勾配$\bm{g}$は
+\[
+\bm{g} = \bm{b}-\bm{X}^*\bm{A} = \begin{pmatrix}
+1 \\ 1 \\ 1 \\ 1\\
+\end{pmatrix} - \begin{pmatrix}
+0 & 0   & 0\\
+0 & 1 & 0\\
+0 & 1 & 0\\
+0 & 1 & 0\\
+\end{pmatrix} \begin{pmatrix}
+1 \\ 1 \\ 1
+\end{pmatrix} = \begin{pmatrix}
+1 \\ 0 \\ 0 \\ 0
+\end{pmatrix}
+\]
+\item
+（FLP2）問題を考え，
+\[
+\begin{split}
+\minimize &\,\,\,\,  \sum_{i \in M} \sum_{j \in N} c_{ij}x_{ij} + \sum_{j \in N} f_j y_j \\
+\text{subject to} &\,\,\,\,  \sum_{j\in N} x_{ij} = 1 \,\, (i \in M),\\
+&\,\,\,\,  \sum_{i \in M} x_{ij} \le |M|y_j \,\, (j \in N),\\
+&\,\,\,\,  x_{ij} \ge 0 \,\, (i \in M, j \in N), \\
+&\,\,\,\, y_j \in \{ 0,1 \} \,\, (j \in N),
+\end{split}
+\]
+（FLP1）問題と（FLP2）問題の制約条件の違うところは，
+\begin{eqnarray}
+\text{for (FLP1)}\,\,\,\,\,\, & x_{ij} \le y_j \,\, &\,\,\,\,\,\, (i \in M, j \in N),　\label{FLP1COND}\\
+\text{for (FLP2)}\,\,\,\,\,\, & \sum_{ i \in M} x_{ij} \le |M|y_j \,\, &\,\,\,\,\,\, (j \in N), \label{FLP2COND}
+\end{eqnarray}
+\begin{itemize}
+\item $y_j=0$の時\\
+$x_{ij}\ge0$ので，$x_{ij} \le 0 \,\, (i \in M) \Leftrightarrow \sum_{i \in M} x_{ij} \le 0$が成り立ち，制約\ref{FLP1COND}と制約\ref{FLP2COND}とは同値である．
+\item $y_j=1$の時\\
+明らかに
+\[
+x_{ij} \le 1 \,\, (i \in M) \Rightarrow \sum_{i \in M} x_{ij} \le \sum_{i \in M} 1 \Leftrightarrow \sum_{i \in M} x_{ij} \le |M|
+\]が成立，また，共通制約条件$\sum_{j\in N} x_{ij} = 1 \,\, (i \in M) ,\,\,\,x_{ij} \ge 0 \,\, (i \in M, j \in N)$より，$0 \le x_{ij} \le 1$ので，逆向き
+\[
+\sum_{i \in M} x_{ij} \le |M| \Leftrightarrow  \sum_{i \in M} x_{ij} \le \sum_{i \in M} 1
+\Leftrightarrow \sum_{i \in M} (1-x_{ij}) \ge 0 
+ \Rightarrow
+(1 - x_{ij})\ge 0  \,\, (i \in M) 
+\]も成り立つため，両問題の実行可能領域が等しいことが分かられる．
+
+\end{itemize}
+\item 制約条件$x_{ij} \le y_j \,\, (i \in M, j \in N),$と$\sum_{ i \in M} x_{ij} \le |M|y_j \,\,  (j \in N)$と$\sum_{j\in N}x_{ij} = 1$をラグランジュ緩和して．（FLP1）と（FLP2）の目的関数はそれぞれ
+\[
+\begin{split}
+\text{(FLP1)}\,
+\min &\, \sum_{i \in M} \sum_{j \in N} c_{ij}x_{ij} + \sum_{i \in M} u_i(1-\sum_{j\in N}x_{ij}) + \sum_{j \in N} f_j y_j + \sum_{i \in M} \sum_{j \in N} \lambda_{ij}(x_{ij} - y_j) \\
+\text{(FLP2)}\,
+\min &\,  \sum_{i \in M} \sum_{j \in N} c_{ij}x_{ij} + \sum_{i \in M} u_i(1-\sum_{j\in N}x_{ij}) + \sum_{j \in N} f_j y_j + \sum_{j \in N} \lambda_j(\sum_{i \in M} x_{ij} - |M|y_j)
+\end{split}
+\]
+である．明らかに，（FLP２）のほうがラグランジュ乗数が少ない．また，両問題を$j$によって子問題を分解すれば，
+\[
+\begin{split}
+\text{(FLP1-SUB-$j$)}\,
+\min &\,  \sum_{i \in M}( c_{ij} - u_i + \lambda_{ij})x_{ij} +  (f_j - \sum_{i \in M} \lambda_{ij})y_j \\
+\text{(FLP2-SUB-$j$)}\,
+\min &\,  \sum_{i \in M}( c_{ij} - u_i )x_{ij} +  \lambda_j|M|(\sum_{i\in M} x_{ij} - y_j) +f_jy_j
+\end{split}
+\]
+子問題(FLP2-SUB-$j$)に対して，問1.1のように，$y_j$を$0$と$1$に固定すれば$\lambda_j$の値も論じられる．だが，子問題(FLP1-SUB-$j$)では，一つの値に対して$x_{ij},\lambda_{ij}$が幾つの組み合わせもあって，あらゆる，子問題(FLP2-SUB-$j$)より実行可能領域が広い\\
+例として$\bm{u}=(6,3,5,4)$の$j=1$の子問題を考え，子問題(FLP2-SUB-$1$)は
+\[
+\minimize \,   -3x_{11} + 3x_{21} - x_{31} + 2x_{41} +  4\lambda_j(\sum_{i\in M} x_{i1} - y_j) + 8y_j
+\]
+\begin{itemize}
+\item $y_j=0$の時，$\forall i \in M, x_{i1}=0$，最小値$0$である．
+\item $y_j=1$の時，$x_{11}=x_{31}=1,x_{21}=x_{41}=0$，$\sum_{i\in M} x_{i1} = 2 > y_j$，目的関数を最小化するため，$\lambda_j=0$．
+\end{itemize}
+一方，子問題(FLP1-SUB-$1$)は
+\[
+\minimize \,   (-3+\lambda_{11})x_{11} + (3+\lambda_{21})x_{21} + (-1+\lambda_{31})x_{31} + (2+\lambda_{41})x_{41} + (8-\sum_{i\in M} \lambda_{ij})y_j
+\]
+$y_j=0$の時，例え$\min(-3+\lambda_{11})$に対して， $x_{11}=0$または$\lambda_{11}=3$も取れる，一意な最適解を求めるのは難しいである（$y_j=1$も同様）．従って，子問題(FLP1-SUB-$j$)と比べ，子問題(FLP2-SUB-$j$)はより簡単に解ける．
+
+\end{enumerate}
+
+\newpage
+\section{問題２：解答}
+
+ひとまず，実数$y,\bm{u}_2$を次のように非負制約に変換する，
+\[
+\begin{split}
+y = y_+ - y_-, \bm{u}_2 = \bm{u}_{2+} - \bm{u}_{2-}\\
+y_+ \ge 0, \,\, y_- \ge 0,\,\, \bm{u}_{2+} \ge \bm{0}, \bm{u}_{2-} \ge \bm{0}
+\end{split}
+\]
+すると，$\bm{u}_1,\bm{u}_2,y$に関する線形計画問題
+\begin{equation}
+\begin{split}
+\minimize &\,\,\,\,  y \\
+\text{subject to} &\,\,\,\, \bm{c}^T\bm{x}^k + \bm{u}_1^T(\bm{b}_1 - \bm{A}_1\bm{x}^k) + \bm{u}_2^T(\bm{b}_2 - \bm{A}_2\bm{x}^k) \le y\,\, \,\,(k = 1,2,\dots,K) \\
+&\,\,\,\, \bm{u}_1 \ge 0, \bm{u_2}\text{は実数}
+\end{split}
+\end{equation}
+を書き直す．
+\begin{equation}
+\begin{split}
+\minimize &\,\,\,\,  y_+ - y_- \\
+\text{subject to} &\,\,\,\, \bm{u}_1^T(\bm{b}_1 - \bm{A}_1\bm{x}^1) + \bm{u}_{2+}^T(\bm{b}_2 - \bm{A}_2\bm{x}^1) -\bm{u}_{2-}^T(\bm{b}_2 - \bm{A}_2\bm{x}^1) - y_+ + y_- \le \bm{c}^T\bm{x}^1  \\
+&\hspace{5cm} \vdots\\
+&\,\,\,\, \bm{u}_1^T(\bm{b}_1 - \bm{A}_1\bm{x}^k) + \bm{u}_{2+}^T(\bm{b}_2 - \bm{A}_2\bm{x}^k) -\bm{u}_{2-}^T(\bm{b}_2 - \bm{A}_2\bm{x}^k) - y_+ + y_- \le \bm{c}^T\bm{x}^k  \\
+&\,\,\,\, \bm{u}_1 \ge 0, y_+ \ge 0, \,\, y_- \ge 0,\,\, \bm{u}_{2+} \ge \bm{0}, \bm{u}_{2-} \ge \bm{0}
+\end{split}
+\label{PrimalProb}
+\end{equation}
+ただし，$\bm{u}_1,\bm{x}^k,\bm{b}_1 \in \mathbb{R}^n, \bm{u}_{2+},\bm{u}_{2-},\bm{b}_2 \in \mathbb{R}^m$\\
+そして，標準形に変換する，
+\begin{equation}
+\bm{A} = 
+\begin{pmatrix}
+(\bm{b}_1 - \bm{A}_1\bm{x}^1)^T & (\bm{b}_2 - \bm{A}_2\bm{x}^1)^T & -(\bm{b}_2 - \bm{A}_2\bm{x}^1)^T & -1 & 1 \\
+(\bm{b}_1 - \bm{A}_1\bm{x}^1)^T & (\bm{b}_2 - \bm{A}_2\bm{x}^1)^T & -(\bm{b}_2 - \bm{A}_2\bm{x}^1)^T &-1 & 1 \\
+&\vdots&\vdots&&\\
+(\bm{b}_1 - \bm{A}_1\bm{x}^1)^T & (\bm{b}_2 - \bm{A}_2\bm{x}^1)^T & -(\bm{b}_2 - \bm{A}_2\bm{x}^1)^T & -1 & 1
+\end{pmatrix}
+\in \mathbb{R}^{Ｋ} \times \mathbb{R}^{n+2m+2}
+\end{equation}
+\begin{equation}
+\begin{comment}[
+\bm{I}_n = \begin{pmatrix}
+1\\
+1\\
+\vdots\\
+1
+\end{pmatrix} \in \mathbb{R}^n
+\,\,\,\
+\end{comment}
+\bm{X} = \begin{pmatrix}
+\bm{u}_1\\
+\bm{u}_{2+}\\
+\bm{u}_{2-}\\
+y_+\\
+y_-
+\end{pmatrix} \in \mathbb{R}^{n+2m+2} \,\,\,
+\bm{B} = \begin{pmatrix}
+ \bm{c}^T\bm{x}^1 \\
+ \bm{c}^T\bm{x}^2 \\
+\vdots\\
+ \bm{c}^T\bm{x}^K 
+\end{pmatrix}  \in \mathbb{R}^K \,\,\,
+\bm{C} = \begin{pmatrix}
+0\\
+0\\
+\vdots\\
+0\\
+1\\
+-1
+\end{pmatrix} \in \mathbb{R}^{n+2m+2}\,\,\,
+\bm{\Lambda} = \begin{pmatrix}
+\lambda_1 \\
+\lambda_2 \\
+\vdots \\
+\lambda_k
+\end{pmatrix}
+\in \mathbb{R}^K
+\end{equation}
+次の線形計画問題とその双対性を利用して双対問題を求め，問題\ref{PrimalProb}を標準形に変形して
+\begin{equation}
+\begin{split}
+\minimize &\,\,\,\, \bm{c}^T\bm{x}\\
+\text{subject to} &\,\,\,\,  \bm{Ax} \ge \bm{b}, \\
+&\,\,\,\,  \bm{Cx} = \bm{d}\\
+&\,\,\,\,  \bm{x} \ge \bm{0}
+\end{split}
+\,\,\,\,\,\,\,
+\Longrightarrow
+\,\,\,\,\,\,\,
+\begin{split}
+\maximize &\,\,\,\, \bm{b}^T\bm{y}_1 + \bm{d}^T\bm{y}_2\\
+\text{subject to} &\,\,\,\,  \bm{A}^T \bm{y}_1 + \bm{C}^T \bm{y}_2 \le \bm{c} \\
+&\,\,\,\,  \bm{y}_1 \ge \bm{0} \\
+&\,\,\,\,  \bm{y}_2 \text{は実数} \\
+\end{split}
+\end{equation}
+\begin{equation}
+\begin{split}
+\minimize_{\bm{X}} &\,\,\,\, \bm{C}^T\bm{X}\\
+\text{subject to} &\,\,\,\,  \bm{AX} \ge \bm{B}, \\
+&\,\,\,\,  \bm{X} \ge \bm{0}
+\end{split}
+\,\,\,\,\,\,\,
+\Longrightarrow
+\,\,\,\,\,\,\,
+\begin{split}
+\maximize_{\bm{\Lambda}} &\,\,\,\, \bm{B}^T\bm{\Lambda} \\
+\text{subject to} &\,\,\,\,  \bm{A}^T \bm{\Lambda} \le \bm{C} \\
+&\,\,\,\,  \bm{\Lambda} \ge \bm{0} \\
+\end{split}
+\end{equation}
+変数を代入すると
+\begin{equation}
+\begin{split}
+\maximize_{\bm{\Lambda}} &\,\,\,\, \sum_{k=1}^K \lambda_k \bm{c}^T\bm{x}^k    \\
+\text{subject to} &\,\,\,\, \sum_{k=1}^K \lambda_k(\bm{b}_1 - \bm{A}_1\bm{x}^k) \ge \bm{0}\\
+&\,\,\,\, \sum_{k=1}^K \lambda_k(\bm{b}_2 - \bm{A}_2\bm{x}^k) \ge \bm{0}\\
+&\,\,\,\, \sum_{k=1}^K -\lambda_k(\bm{b}_2 - \bm{A}_2\bm{x}^k) \ge \bm{0}\\
+&\,\,\,\, \sum_{k=1}^K -\lambda_k \le 1 \\
+&\,\,\,\, \sum_{k=1}^K \lambda_k \le -1 \\
+&\,\,\,\, \lambda_k \ge 0, \,\, k = 1,2,\dots,K
+\end{split}
+\end{equation}
+整理すれば，双対問題ができる
+\begin{equation}
+\begin{split}
+\maximize_{\bm{\Lambda}} &\,\,\,\, \sum_{k=1}^K \lambda_k \bm{c}^T\bm{x}^k    \\
+\text{subject to} &\,\,\,\, \sum_{k=1}^K \lambda_k(\bm{b}_1 - \bm{A}_1\bm{x}^k) \ge \bm{0}\\
+&\,\,\,\, \sum_{k=1}^K \lambda_k(\bm{b}_2 - \bm{A}_2\bm{x}^k) = \bm{0}\\
+&\,\,\,\, \sum_{k=1}^K \lambda_k = 1 \,\,\, \lambda_k \ge 0, \,\, k = 1,2,\dots,K
+\end{split}
+\end{equation}
+
+\begin{comment}
+###############################################
+次の問題
+\begin{equation}
+\begin{split}
+\minimize &\,\,\,\,  y \\
+\text{subject to} &\,\,\,\, \bm{c}^T\bm{x}^k + \bm{u}_1^T(\bm{b}_1 - \bm{A}_1\bm{x}^k) + \bm{u}_2^T(\bm{b}_2 - \bm{A}_2\bm{x}^k) \le y \\
+&\,\,\,\, \bm{u}_1 \ge 0, \bm{u_2}\text{は実数}
+\end{split}
+\end{equation}
+は
+\begin{equation}
+L(\bm{u}_1,\bm{u}_2) = \max \Bigr\{ \bm{c}^T\bm{x}^k + \bm{u}_1^T(\bm{b}_1 - \bm{A}_1\bm{x}^k) + \bm{u}_2^T(\bm{b}_2 - \bm{A}_2\bm{x}^k) \Bigr| \begin{cases}
+\bm{u}_1&\ge 0,\\
+\bm{u}_2&\text{は実数}, \\
+k&= 1,2,\dots,K
+\end{cases} \Bigr\}
+\end{equation}
+とは同値である．また，問題$L(\bm{u}_1,\bm{u}_2) $を$k$ごとに分解すると，$K$個の$L_{\bm{x}^k}$を次のように定義でき．$L(\bm{u}_1,\bm{u}_2) $の最適値は$L(\bm{u}_1^*,\bm{u}_2^*) = \max\{ L_{\bm{x}^k} | k = 1,2,\dots,K \}$である．ただし，$L_{\bm{x}^k}^*$は各子問題の最適値である．
+\begin{equation}
+\begin{split}
+\maximize_{\bm{x}^k} &\,\,\,\,  \bm{c}^T\bm{x}^k \\
+\text{subject to} &\,\,\,\, \bm{b}_1 - \bm{A}_1\bm{x}^k \ge 0 \\
+&\,\,\,\, \bm{b}_2 - \bm{A}_2\bm{x}^k = 0
+\end{split}
+\label{PrimalSubProb2}
+\end{equation}
+%ラグランジュ緩和の性質より問題\ref{PrimalProb}の目的関数値$L_p \le  L(\bm{u}_1,\bm{u}_2) $，最適値$L_p^* = \min_{\bm{u}_1,\bm{u}_2} L(\bm{u_1},\bm{u_2}) $．
+そして，問題\ref{PrimalSubProb2}を次のように変形できる．
+\begin{equation}
+\begin{split}
+\minimize_{\bm{x}^k} &\,\,\,\,  \bm{c}^T(-\bm{x}^k) \\
+\text{subject to} &\,\,\,\,  \bm{A}_1(-\bm{x}^k) \ge (-\bm{b}_1) \\
+&\,\,\,\,  \bm{A}_2(-\bm{x}^k) = (-\bm{b}_2)
+\end{split}
+\label{PrimalSubProb}
+\end{equation}
+次の
+
+次の線形計画問題
+\begin{equation}
+\begin{split}
+\minimize &\,\,\,\, \bm{c}^T\bm{x}\\
+\text{subject to} &\,\,\,\,  \bm{Ax} \ge \bm{b}, \\
+&\,\,\,\,  \bm{Cx} = \bm{d}\\
+&\,\,\,\,  \bm{x} \ge \bm{0}
+\end{split}
+\,\,\,\,\,\,\,
+\Leftrightarrow
+\,\,\,\,\,\,\,
+\begin{split}
+\minimize &\,\,\,\, \bm{b}^T\bm{y}_2 + \bm{d}^T\bm{y}_2\\
+\text{subject to} &\,\,\,\,  \bm{A}^T \bm{y}_1 + \bm{C}^T \bm{y}_1 \le \bm{c} \\
+&\,\,\,\,  \bm{y}_1 \ge \bm{0} \\
+&\,\,\,\,  \bm{y}_2 \text{は実数} \\
+\end{split}
+\end{equation}
+とその双対問題
+\begin{equation}
+\begin{split}
+\minimize &\,\,\,\, \bm{b}^T\bm{y_1} + \bm{d}^T\bm{y_2}\\
+\text{subject to} &\,\,\,\,  \bm{A}^T \bm{y_1} + \bm{C}^T \bm{y_2} \le \bm{c} \\
+&\,\,\,\,  \bm{y_1} \ge \bm{0}
+\end{split}
+\end{equation}
+を考え．次のラグランジュ緩和をとると
+######################################################3
+\end{comment}
+
+\newpage
+\section{問題３：解答}
+\[
+ \bm{x} = \begin{pmatrix} x_0\\ \bm{x_1} \end{pmatrix},\,\, 
+ \bm{y} = \begin{pmatrix} y_0\\ \bm{y_1} \end{pmatrix} \in \mathbb{R}^{1+n} \,\,
+ \text{に対して,\,\,}
+ \bm{x} \circ \bm{y} = \begin{pmatrix}
+ x_0y_0+\bm{x_1}^T\bm{y_1}\\
+ x_0 \bm{y_1} + y_0 \bm{x_1}
+\end{pmatrix}
+\]
+\begin{enumerate}
+\item
+\[
+\begin{split}
+& \bm{x} \circ ( ( \bm{x} \circ \bm{x}) \circ \bm{y} ) \\
+=\,\,\, & 
+\begin{pmatrix} x_0\\ \bm{x_1} \end{pmatrix} \circ
+\Bigr( \Bigr( \begin{pmatrix} x_0\\ \bm{x_1} \end{pmatrix} \circ
+\begin{pmatrix} x_0\\ \bm{x_1} \end{pmatrix} \Bigr) \circ
+\begin{pmatrix} y_0\\ \bm{y_1} \end{pmatrix} \Bigr) \\
+=\,\,\, &
+\begin{pmatrix} x_0\\ \bm{x_1} \end{pmatrix} \circ
+\Bigr( 
+\begin{pmatrix}
+x_0x_0 + \bm{x_1}^T\bm{x_1} \\
+x_0\bm{x_1} + x_0\bm{x_1} 
+\end{pmatrix} \circ
+\begin{pmatrix} y_0\\ \bm{y_1} \end{pmatrix} \Bigr) \\
+=\,\,\, &
+\begin{pmatrix} x_0\\ \bm{x_1} \end{pmatrix} \circ
+\begin{pmatrix}
+(x_0x_0 + \bm{x_1}^T\bm{x_1})y_0 + (x_0\bm{x_1} + x_0\bm{x_1})^T\bm{y_1} \\
+(x_0x_0 + \bm{x_1}^T\bm{x_1})\bm{y_1} + y_0(x_0\bm{x_1} + x_0\bm{x_1}) \\
+\end{pmatrix}\\
+=\,\,\, &
+\begin{pmatrix} x_0\\ \bm{x_1} \end{pmatrix} \circ
+\begin{pmatrix}
+(x_0x_0 + \bm{x_1}^T\bm{x_1})y_0 + (x_0\bm{x_1} + x_0\bm{x_1})^T\bm{y_1} \\
+(x_0x_0 + \bm{x_1}^T\bm{x_1})\bm{y_1} + y_0(x_0\bm{x_1} + x_0\bm{x_1}) \\
+\end{pmatrix}\\
+%=\,\,\, &
+%\begin{pmatrix}
+%x_0(x_0x_0 + \bm{x_1}^T\bm{x_1})y_0 + x_0(x_0\bm{x_1} + x_0\bm{x_1})^T\bm{y_1} + \bm{x_1}^T(x_0x_0 + \bm{x_1}^T\bm{x_1})\bm{y_1} + \bm{x_1}^Ty_0(x_0\bm{x_1} + x_0\bm{x_1})  \\
+%x_0(x_0x_0 + \bm{x_1}^T\bm{x_1})\bm{y_1} + x_0y_0(x_0\bm{x_1} + x_0\bm{x_1}) + (x_0x_0 + \bm{x_1}^T\bm{x_1})y_0\bm{x_1} + (x_0\bm{x_1} + x_0\bm{x_1})^T\bm{y_1}\bm{x_1}  \\
+%\end{pmatrix}\\
+=\,\,\, &
+\begin{pmatrix}
+(x_0x_0 + \bm{x_1}^T\bm{x_1})(x_0y_0+\bm{x_1}^T\bm{y_1}) + (x_0\bm{x_1}+x_0\bm{x_1})^T(x_0\bm{y_1} + y_0\bm{x_1}) \\
+(x_0x_0 + \bm{x_1}^T\bm{x_1})(x_0\bm{y_1} + y_0\bm{x_1}) + (x_0y_0 + \bm{x_1}^T\bm{y_1})(x_0\bm{x_1} + x_0\bm{x_1})
+\end{pmatrix}\\
+=\,\,\, & \begin{pmatrix}
+x_0x_0 + \bm{x_1}^T\bm{x_1} \\
+x_0\bm{x_1} + x_0\bm{x_1}
+\end{pmatrix}
+\circ
+\begin{pmatrix}
+x_0y_0 + \bm{x_1}^T\bm{y_1} \\
+x_0\bm{y_1} + \bm{y_0}\bm{x_1}
+\end{pmatrix}\\
+=\,\,\, & \Bigr( \Bigr(
+\begin{pmatrix} x_0\\ \bm{x_1} \end{pmatrix} \circ
+ \begin{pmatrix} x_0\\ \bm{x_1} \end{pmatrix} \Bigr) \circ \Bigr(
+\begin{pmatrix} x_0\\ \bm{x_1} \end{pmatrix}  \circ
+\begin{pmatrix} y_0\\ \bm{y_1} \end{pmatrix} \Bigr)\Bigr)\\
+=\,\,\, & (\bm{x} \circ \bm{x}) \circ ( \bm{x} \circ \bm{y})
+\end{split}
+\]
+従って，結合法則$\bm{x} \circ ( ( \bm{x} \circ \bm{x}) \circ \bm{y} ) = (\bm{x} \circ \bm{x}) \circ ( \bm{x} \circ \bm{y})$が成り立つ．
+\item 対称錐$\mathcal{K} = \{ \bm{x} \in \mathbb{R}^{1+n}\,\, |\,\, \exists \bm{y}, \,\, \bm{x} = \bm{y} \circ \bm{y} \}$の条件に対して，
+\[
+\begin{split}
+\bm{x} = \bm{y} \circ \bm{y} \,\,\, & \Longleftrightarrow \,\,\,  \begin{pmatrix} x_0\\ \bm{x_1} \end{pmatrix} = \begin{pmatrix} y_0\\ \bm{y_1} \end{pmatrix} \circ \begin{pmatrix} y_0\\ 
+\bm{y_1} \end{pmatrix}\\
+& \Longleftrightarrow \,\,\,  \begin{pmatrix} x_0\\ \bm{x_1} \end{pmatrix} = \begin{pmatrix} y_0y_0 + \bm{y_1}^T\bm{y_1} \\ 2y_0\bm{y_1} \end{pmatrix}\\
+& \Longleftrightarrow \,\,\, \begin{cases} x_0 = y_0^2 + \bm{y_1}^T\bm{y_1} > 0, \\ \bm{x_1}=2y_0\bm{y_1}  \end{cases}
+\end{split}
+\]
+なので，$\mathcal{K}$の$\bm{x}$に対して，
+\[
+x_0^2 - \bm{x_1}^T\bm{x_1} = y_0^4 - 2y_0^2\bm{y_1}^T\bm{y_1} + (\bm{y_1}^T\bm{y_1})^2 = (y_0^2 -\bm{y_1}^T\bm{y_1})^2 \ge 0 \]
+また，$x_0 > 0$ので， $\|\bm{x_1}\| \le x_0$が成り立つ．従って，$\exists \bm{y}, \,\, \bm{x} = \bm{y} \circ \bm{y} \Rightarrow \|\bm{x_1}\| \le x_0$，逆向きも自明であるので，対称錐$\mathcal{K} = \{ \bm{x} \in \mathbb{R}^{1+n}\,\, |\,\, \exists \bm{y}, \,\, \bm{x} = \bm{y} \circ \bm{y} \}$が$\Bigr\{\begin{pmatrix}
+x_0 \\ \bm{x_1}
+\end{pmatrix} \,\, \Bigr| \,\,\, \|\bm{x_1}\| \le x_0
+ \Bigr\}$と一致する．
+
+
+
+\end{enumerate}
+
+\newpage
+\section{問題４：解答}
+\begin{enumerate}
+\item
+整数非負問題
+\[
+X=\{ y \in \mathbb{Z}_+^4 | 4y_1 + 5y_2 + 9y_3 + 12y_4 \le 34 \}
+\]
+に対して，不等式$y_2+y_3+2y_4 > 6$が妥当不等式であることを示す．$y \in \mathbb{Z}_+^4$ので
+\[
+\begin{split}
+& \,\,\,4y_1 + 5y_2 + 9y_3 + 12y_4 \le 34 \\
+\Rightarrow &\,\,\, 5y_2+9y_3 + 12y_4 \le 34\\
+\Leftrightarrow &\,\,\, y_2 + 1.8y_3 + 2.4y_4 \le 6.8 \\
+\Rightarrow &\,\,\, y_2 + y_3 + 2y_4 \le 6.8 \\
+\Rightarrow &\,\,\, y_2 + y_3 + 2y_4 \le 6 \,\,\,\,\,\,(y\in \mathbb{Z}_+^4)\\
+\end{split}
+\]
+$\forall y\in \mathbb{Z}_+^4,\,\, y_2+y_3+2y_4 > 6$が成り立つので，妥当不等式である．
+\item
+被覆不等式を用いて妥当不等式を構造する．\\
+\[
+X = \{ X \in \{0,1\}^n\,\,|\,\, \sum_{j=1}^n a_jx_j \le b \}
+\]
+に対して，
+\[
+\sum_{j \in C} a_j > b
+\]
+を満たすとき，被覆不等式とは
+\[
+\sum_{j\in C} x_j \le |C| -1
+\]
+である．$X = \{ X \in \{0,1\}^n\,\,|\,\, 7x_1 + 6x_2 + 6x_3 + 4x_4 + 3x_5 \le 14 \}$に対して，すべての$\sum_{j \in C} a_j > b$を満たす$C$を列挙すればよい，なお，$C_i \subset C_j$に対して，$C_i$が被覆の時であるとき$C_j$も被覆であるので，その場合$C_j$を取り除けて極小な被覆集合のみを構造する．
+\begin{eqnarray*}
+C_1 = \{ 1, 2, 3 \} \,\,&\,\, C_2 = \{ 1, 2, 4 \} \,\,&\,\, C_3 = \{ 1, 2, 5 \}  \\
+C_4 = \{ 1, 3, 4 \} \,\,&\,\, C_5 = \{ 1, 3, 5 \} \,\,&\,\, C_6 = \{ 2, 3, 4 \}  \\
+C_7 = \{ 2, 3, 5 \} \,\,&\,\, 
+\end{eqnarray*}
+すべて$C_k$に対応する妥当不等式を作成する．
+\begin{eqnarray*}
+C_1 : \,\, x_1 + x_2 + x_3 \,\le\, 2 \, &\,\,\,\,\,\,\,\,\,& C_5 : \,\, x_1 + x_3 + x_5 \,\le\, 2 \\
+C_2 : \,\, x_1 + x_2 + x_4 \,\le\, 2 \, &\,\,\,\,\,\,\,\,\,& C_6 : \,\, x_2 + x_3 + x_4 \,\le\, 2 \\
+C_3 : \,\, x_1 + x_2 + x_5 \,\le\, 2 \, &\,\,\,\,\,\,\,\,\,& C_7 : \,\, x_2 + x_3 + x_5 \,\le\, 2 \\ 
+C_4 : \,\, x_1 + x_3 + x_4 \,\le\, 2 \, &\,\,\,&
+\end{eqnarray*}
+点$\bm{x}=(\frac{1}{7},1,\frac{1}{2},\frac{1}{4},1)$は$C_3$に対応する妥当不等式を満たさないので，カットされている．
+
+
+
+
+
+\end{enumerate}
+
+
+
+
+\end{document}

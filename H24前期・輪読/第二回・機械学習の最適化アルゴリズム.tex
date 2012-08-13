@@ -1,0 +1,305 @@
+\documentclass[a4paper,11pt]{jsarticle}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{amssymb}
+\usepackage{ascmac}
+\usepackage{subfigure}
+\usepackage{bm}
+\usepackage{setspace}
+\usepackage{cases}%左かっこつけるときに必要だった
+\usepackage{leftidx}%行列表示用？
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{url}
+
+\setlength{\headsep}{5mm}
+\setlength{\oddsidemargin}{-0.5zw} %→にズラす
+\setlength{\textheight}{37\baselineskip}
+\addtolength{\textheight}{\topskip}
+\setlength{\topmargin}{-10mm}
+\setlength{\textwidth}{45zw} %文章の幅
+\setlength{\textheight}{215mm}
+\setlength{\parindent}{1zw}%箇条書きの一文字下げ
+\pagestyle{fancy}
+
+\newtheorem{theorem}{定理}
+\newtheorem{prop}[theorem]{命題}
+\newtheorem{lemma}[theorem]{補題}
+\newtheorem{cor}[theorem]{系}
+\newtheorem{example}[theorem]{例}
+\newtheorem{definition}[theorem]{定義}
+\newtheorem{rem}[theorem]{注意}
+\newtheorem{guide}[theorem]{参考}
+\renewcommand{\proofname}{証明}
+
+\numberwithin{theorem}{section}  % 定理番号を「定理2.3」のように印刷
+\numberwithin{equation}{section} % 式番号を「(3.5)」のように印刷
+\newcommand{\argmax}{\mathop{\rm arg~max\,}\limits}
+\newcommand{\argmin}{\mathop{\rm arg~min\,}\limits}
+\newcommand{\st}{\mathop{\rm subject~to\,}\limits}
+\newcommand{\sign}{\mathop{\rm sign\,}\limits}
+
+\newcommand{\dom}{\mathop{\mathrm{\bf dom}}\nolimits}
+\newcommand{\minimize}{\mathop{\mathrm{\rm minimize}}\limits}
+
+
+\lhead{正則化付き最小化問題のアルゴリズム}
+\chead{}
+\rhead{輪読}
+\lfoot{チョウ　シホウ}
+\cfoot{\thepage}
+\rfoot{5月28日}
+\renewcommand{\footrulewidth}{0.4pt}
+\title{正則化付き最小化問題のアルゴリズム}
+\author{12M42340　チョウ　シホウ}
+\date{5月28日}
+
+\begin{document}
+\pagenumbering{roman}
+%\tableofcontents
+%\cleardoublepage
+\pagenumbering{arabic}
+\renewcommand{\thepart}{\arabic{part}}
+
+\thispagestyle{empty}
+\section{前回に引き続き}
+\subsection{ $L_1$ Regularized Logistic Regression }
+次の教師付き学習問題を考え：Training setは$ \{ (x_i,y_i),\,\,\, i= 1,\dots,M \},\,\, x_i \in \mathbb{R}^N, \, y_i \in \{ -1,1 \}$，ロジスティック回帰モデル（Logistic Regression Model）の確率分布は：
+\begin{equation}
+p(y|x;\theta) = \sigma(y\theta^Tx) = \frac{1}{1+ \exp(- y\theta^T x)}
+\,\,\,\, ,y \in \{-1,1\}
+\end{equation}
+ただし，$\theta \in \mathbb{R}^N$はロジスティック回帰モデルのパラメーターである．\\
+ラプラス分布の事前確率は
+\begin{equation}
+p(\theta) = \prod_{j}^N \bar{p}(\theta_j) = \prod_{j}^N \frac{1}{2\beta}\exp \Bigr( -\frac{|\theta_j |}{\beta} \Bigr) = \Bigr(\frac{1}{2\beta}\Bigr)^N \exp\Bigr(-\frac{\| \theta \|_1}{\beta}\Bigr), \,\,\, \beta > 0
+\end{equation}
+パラメーター$\theta$に対しての最大事後確率（maximum a posteriori）推定は
+\begin{equation}
+\minimize_{\theta} \sum_{i=1}^M -\log p(y_i | x_i;\theta) + \frac{\| \theta \|_1}{\beta}
+\end{equation}
+であり，次の式と同値
+\begin{equation}
+\minimize_{\theta} \sum_{i=1}^M -\log p(y_i | x_i;\theta),\,\,\, \st \| \theta \|_1 \le C
+\end{equation}
+\section{正則化付き最小化問題}
+\begin{equation}
+\minimize_{w \in \mathbb{R}^n}\,\,\,\,\,\,\phi_{\gamma}(w):=f(w)+\gamma r(w) \label{1.5}
+\end{equation}
+
+近年，式\ref{1.5}の正則化付き最小化問題はかなり研究されていて，勾配法または劣勾配法のような汎用アルゴリズムは幾つがある．一般的な関数に対して収束率がせいぜい$\frac{1}{k^2}$すぎないが，関数の特徴を利用すればもっと早く収束できる．
+
+\section{First-Order Methods}
+\subsection{準備}
+\begin{definition}
+関数$f$の定義域$\dom f$が凸であり，かつ，次の条件
+\begin{equation}
+\forall \alpha \in [0,1], f(\alpha x + (1- \alpha)y) + \mu \frac{\alpha(1-\alpha)}{2}\|x-y\|^2 \le \alpha f(x) + (1- \alpha)f(y)
+\end{equation}
+を満たすとき，$f$を{\bf $\mu$-強凸関数($\mu$-strongly convex function)}という．
+\begin{itemize}
+\item
+$\mu$-strongly convex function の一次条件：$f$が一階微分可能，かつ
+\begin{equation}
+\forall x,y \in \dom f, \,\,\,\, f(y) \ge f(x) + \langle \nabla f(x),x-y \rangle + \frac{\mu}{2} \| x-y \|^2
+\end{equation}
+\item
+$\mu$-strongly convex function の二次条件：$f$が二階微分可能，かつ
+\begin{equation}
+\forall x,y \in \dom f, \,\,\,\, \langle \nabla^2 f(x)y,y \rangle \ge \mu \| y \|^2
+\end{equation}
+
+特に，$\|\cdot\|={\|\cdot\|}_2$の場合，$\nabla^2 f(x) \succeq \mu \mathbb{I}$
+\end{itemize}
+\end{definition}
+\begin{definition}
+関数$f$が
+\begin{equation}
+\exists L \ge 0,{\| \nabla f(x) - \nabla f(y)\|}_{*} \le L \|x-y\|
+\end{equation}
+を満たすとき，$f$は{\bf リプシッツ連続(Lipschitz continuity)}である．$f$がリプシッツ条件を満たすための最小の$L$の値を$f$の{\bf リプシッツ定数(Lipschitz constant)}という．
+
+リプシッツ連続は関数における通常の連続よりも強い平滑(smoothness)条件である．直観的には，リプシッツ連続は変化の速度を制限するものである．
+\end{definition}
+\begin{prop}
+微分可能かつ凸のリプシッツ連続関数$f$を$f \in C_{L}^{1,1}$と記述する．$f$は二階微分可能ならば，
+\begin{equation}
+f \in C_{L}^{1,1} \Leftrightarrow \langle \nabla^2 f(x)y,y \rangle \preceq L\|y\|^2
+\end{equation}
+
+$C_L^{k,p}$とは$k$階連続微分可能（$k$ times continuously differentiable）かつ$p$階微分が$L$リシッツ連続の関数の集合．
+\end{prop}
+\begin{prop}
+連続微分可能の$\mu$-strongly convex 関数集合を$S_\mu^1$という，また，$f$が$\mu$-strongly convex functionかつ$f \in C_L^{k,p}$の関数$f$の集合は$S_{\mu,L}^{k,p}$という．
+\end{prop}
+\begin{prop}
+一般的には，平滑かつ凸(smooth and convex)関数$f$に対して，
+\begin{equation}
+\exists 0 \le \mu \le L,\,\, \forall x,\,\, \mu \mathbb{I} \preceq \nabla^2f(x) \preceq L \mathbb{I}
+\end{equation}
+特に，凸関数$f = \frac{1}{2}x^TAx$に対して，$\mu \mathbb{I} \preceq A \preceq L\mathbb{I}$
+\end{prop}
+\begin{prop}
+\label{l-prop}
+\begin{equation}
+f \in C_{L}^{1,1} \Rightarrow f(y) \le f(x) + \langle \nabla f(x), y-x \rangle + \frac{L}{2}\| y-x \|^2
+\end{equation}
+\end{prop}
+\begin{proof}
+\begin{equation}
+\begin{split}
+& f(y) - f(x) - \langle \nabla f(x), y-x \rangle \\
+= & \int_0^1 \langle \nabla f(x+\tau(y-x)),y-x \rangle d\tau - \int_0^1 \langle \nabla f(x), y-x \rangle d\tau \\
+= &  \int_0^1 \langle \nabla f \big( x + \tau ( y-x) \big) - \nabla f(x),y-x \rangle d\tau \\
+\le & \int_0^1 \| \nabla f \big( x + \tau ( y-x) \big) - \nabla f(x) \|_* \cdot \| y-x \| d\tau \\
+\le & \int_0^1 L\|  \tau ( y-x) \| \cdot \| y-x \| d\tau \\
+= & \frac{L}{2} \| y-x \|^2
+\end{split}
+\end{equation}
+\end{proof}
+\begin{prop}
+すべての$f \in S_{\mu,L}^{1,1}$に対して，
+\begin{equation}
+\langle \nabla f(x) - \nabla f(y), x-y \rangle \ge \frac{\mu L}{\mu + L}\| x-y \|^2 + \frac{1}{\mu + L}\| \nabla f(x) - \nabla f(y) \|^2 \label{2.1.24}
+\end{equation}
+\end{prop}
+\begin{proof}
+本\cite{iloco}の66ページを参照
+\end{proof}
+\begin{definition}
+数列$\{\delta_i\}$が$0$に収束することを仮定すると，{\bf 収束率（rate of convergence）}は
+\begin{equation}
+\lim_{i \to \infty} \frac{\delta_{i+1}}{\delta_i}=\sigma
+\end{equation}
+に定義する．
+\begin{itemize}
+\item $\sigma = 0$：超線形収束（superlinear rate）
+\item $\sigma = 1$：劣線形収束（sublinear rate）
+\item $\sigma \in (0,1)$：線形収束（linear rate）
+\end{itemize}
+\end{definition}
+\subsection{勾配法（Gradient method）}
+それでは，勾配法の収束率を求めよう．次の問題を考え：関数$f  \in C_L^{1,1} $，$x_{k+1} = x_k - h_k \nabla f(x_k)$，その最小値$\min f(x)$を求める．\\
+命題\ref{l-prop}より，
+\begin{equation}
+\begin{split}
+f(x_{k+1}) & \le f(x_k) + \langle \nabla f(x_k), x_{k+1}-x_k \rangle + \frac{L}{2}\|  x_{k+1} - x_k \|\\
+& = f(x_k) - h_k \| \nabla f(x_k) \|^2 +  \frac{h_k^2}{2}L\| \nabla f(x_k) \|^2 \\
+& = f(x_k) - h_k(1- \frac{h_k}{2}L)\|  \nabla f(x_k) \|^2
+\end{split}
+\end{equation}
+定ステップ法（constant step strategy）を用いて，$h_k = h$．最適なステップサイズを得るため，
+\begin{equation}
+ \Delta(h) = -h(1-\frac{hL}{2})
+\end{equation}
+の最小値$\min \Delta(h)$を求める．$\Delta ' (h) = hL-1=0$ので，最適解$h^*=\frac{1}{L}$である．また，最適解$x^*$を取るときの最適値$f^*=f(x^*)=\inf_x f(x)$とおく．
+\begin{equation}
+\begin{split}
+f(x_{k+1}) & \le f(x_k) - \frac{h}{2}\| \nabla f(x) \|_2^2\\
+& \le f^* + \nabla f(x)^T(x_k - x^*) - \frac{h}{2}\| \nabla f(x) \|_2^2\\
+& = f^* + \frac{1}{2h}\Bigr(  \| x_k -x^* \|_2^2 - \| x_k -x^* - h \nabla f(x_k) \|_2^2  \Bigr)\\
+& = f^* + \frac{1}{2h}\Bigr(  \| x_k -x^* \|_2^2 - \| x_{k+1}-x^* \|_2^2  \Bigr)\\
+& = f^* + \frac{L}{2}\Bigr(  \| x_k -x^* \|_2^2 - \| x_{k+1}-x^* \|_2^2  \Bigr)
+\end{split}
+\end{equation}
+$f(x_{k+1})$と$f^*$の差を$\delta_{k+1} := f({x_{k+1}})-f^*$とおくと，
+\begin{equation}
+\begin{split}
+0 & \,\,\,\le\,\,\,  \frac{L}{2}\| x_{k+1}-x^* \|_2^2 \,\,\,\le\,\,\, -\delta_{k+1} + \frac{L}{2}\| x_k -x^* \|_2^2 \\
+& \,\,\,\le\,\,\, \dots \,\,\,\le\,\,\, - \sum_{i=1}^{k+1} \delta_i +  \frac{L}{2}\| x_0 -x^* \|_2^2 \\
+& \,\,\,\le\,\,\, -(k+1)\delta_{k+1} + \frac{L}{2}\| x_0 -x^* \|_2^2 
+\end{split}
+\label{roc}
+\end{equation}
+変形すると，
+\begin{equation}
+\delta_{k+1} \,\,\, \le \,\,\, \frac{L\| x_0 - x^* \|_2^2}{2(k+1)}
+\end{equation}
+従って，$f \in C_L^{1,1}$の時，$f$は$\frac{1}{k}$の劣線形収束率で収束する．が，もう少しスピードアップしたい．
+
+\subsection{Strongly Convex Function}
+$f \in S_{\mu,L}^{1,1} $の時，もっと早いスピードで収束できる．
+式\ref{2.1.24}より，
+\begin{equation}
+\begin{split}
+\| x_{k+1} - x^* \|_2^2 & \,\,\, = \,\,\, \| x_k - h\nabla f(x_k) - x^* \|_2^2 \\
+& \,\,\, = \,\,\, \| x_k - x^* \|_2^2 - 2h\nabla f(x_k)^T(x_k - x^*) + h^2\| \nabla f(x_k) \|_2^2 \\
+& \,\,\, = \,\,\, \| x_k - x^* \|_2^2 + h^2\| \nabla f(x_k) \|_2^2 -  2h\bigr(\nabla f(x_k) - \nabla f(x^*)\bigr)^T(x_k - x^*) \\
+& \,\,\, \le \,\,\, \| x_k - x^* \|_2^2 + h^2\| \nabla f(x_k) \|_2^2 -  2h\bigr( \frac{\mu L}{\mu + L}\| x_k - x^*\|_2^2 + \frac{1}{\mu + L}\| \nabla f(x_k) \|_2^2 \bigr)\\
+& \,\,\, = \,\,\, (1- h\frac{2\mu L}{\mu + L})\| x_k - x^* \|_2^2 + h(h - \frac{2}{\mu + L}) \| \nabla f(x_k) \|_2^2 \\
+& \,\,\, \le \,\,\, (1- h\frac{2\mu L}{\mu + L})\| x_k - x^* \|_2^2
+\end{split}
+\end{equation}
+$h(h - \frac{2}{\mu + L})$を最小にするのステップサイズ$h = h^* = \frac{2}{\mu + L}$とおくと，式\ref{roc}のように変形すれば，
+\begin{equation}
+\delta_{k+1} = f(x_k) - f^* \le \frac{L}{2} \Bigr( \frac{L-\mu}{L+\mu} \Bigr)^{2k} \| x_0 - x^* \|_2^2
+\end{equation}
+従って，$f \in S_{\mu,L}^{1,1}$の時，$f$は線形収束率で収束できる．
+
+\section{Shrinking/Thresholding for Regularized Optimization}
+一般的には，式\ref{1.5}の正則化関数$r(w)$はスムーズではなくてシンプルの関数（nonsmooth but simple）である．{\bf Iterative shrinking/thresholding algorithm（IST）}または{\bf Forward-backward splitting}とは，$f$を対角二次ヘッセ行列と入れ替えて元問題をより簡単に解けるアルゴリズムである：
+\begin{equation}
+\begin{split}
+& \min_{w} \frac{1}{2\alpha}\| w - ( x - \alpha \nabla f(w) )  \|_2^2 + \gamma r(w) \\
+\Leftrightarrow \,\,\,\,\,\,& \min_{w} \nabla f(w)^T(w - x) + \frac{1}{2\alpha}\| w - x \|_2^2 + \gamma r(w)
+\end{split}
+\end{equation}
+
+
+{\bf 縮小オペレーター（shrinking operator/proximity operator/thresholding function）}を
+\begin{equation}
+S_\gamma(y,\alpha) := \argmin_{w} \frac{1}{2\alpha}\| w - y \|_2^2 + \gamma r(w)
+\end{equation}
+に定義すると．次のような反復アルゴリズムを考えることができる．
+\begin{equation}
+\begin{split}
+w_{k+1} & := S_\gamma(w_k - \alpha_k \nabla f(w_k),\alpha_k)\\
+& := \argmin_{w} (w - w_k)^T \nabla f(w_k) + \frac{1}{2\alpha}\| w - w_k \|_2^2 + \gamma r(w) 
+\end{split}
+\end{equation}
+
+一部の正則化関数に対して，子問題は簡単関数である．例えば，$r(w)=\|w\|_1$の場合，
+\begin{equation}
+S_\gamma(y,\alpha) = \sign(y)\max(|y|-\alpha \gamma,0) \label{soft-t}
+\end{equation}
+
+式\ref{soft-t}はSoft-thresholding functionと呼ばれる．ISTの利点は１反復あたりの計算量（勾配の計算コストと$S_\gamma(y,\alpha)$の計算コスト）が小さいことである．一方，ISTはステップサイズ$\alpha$の選択方法が難しいことなどの問題点がある．
+
+\section{Second-order methods}
+申し訳ないが，Second-order methodsわからない．略
+
+\section{Regularized dual averaging}
+Regularized dual averaging（RDA）は反復ごとに劣勾配を解くことだけではなく，すべての正則化項（Regularized items）を含む簡単な最適化問題を解くアルゴリズムである．
+
+Regularized stochastic learning problemとは
+\begin{equation}
+\minimize_{w} \phi_\gamma(w) := E_\xi f(w,\xi) + \gamma r(w)
+\end{equation}
+
+$\xi$は入力・出力ペアの分布に従う変数である．反復$k$ではランダムで$\xi$分布から$\xi_k$を選び．$g_k \in \partial f(w_k,\xi_k)$とおくと，平均劣勾配（averaged subgradient）を
+\begin{equation}
+\bar{g}_k = \frac{1}{k}\sum_{i=1}^k g_i
+\end{equation}
+に定義できる．そして，次の子問題を解く：
+\begin{equation}
+w_{k+1} := \argmin_{w} \bar{g}_k^T w + \gamma r(w) + \frac{\alpha}{\sqrt{k}}\|w - w_0\|^2
+\end{equation}
+その平均収束率$\bar{w}_k$は
+\begin{equation}
+E_{\phi_\gamma}(\bar{w}_k) - \phi_\gamma^* \le \frac{C}{\sqrt{k}}
+\end{equation}
+\begin{thebibliography}{99}
+\bibitem{lr} Efficient L1 Regularized Logistic Regression. Su-In Lee, Honglak Lee, Pieter Abbeel and Andrew Y. Ng. In Proceedings of the Twenty-First National Conference on Artificial Intelligence (AAAI-06), 2006.
+\bibitem{iloco} Y. Nesterov, Introductory Lectures on Convex Optimization: A Basic Course (Applied Optimization), 1st ed.    Springer Netherlands.
+\bibitem{nips-t} Steve Wright, NIPS Tutorial, 6 December 2010,\,\,\url{ http://pages.cs.wisc.edu/~swright/nips2010/sjw-nips10.pdf}
+\bibitem{nogm} Nesterov's Optimal Gradient Method.Yao-Liang Yu. University of Alberta. August 6, 2009 \url{http://webdocs.cs.ualberta.ca/~yaoliang/Non-smooth Optimization.pdf}
+\bibitem{tomioka} 冨岡亮太（東京大学） 「機械学習における連続最適化の新しいトレンド」 \url{http://www.nec.co.jp/rd/datamining/project/nec_datamining_seminar15.pdf}
+\bibitem{gradient} EE236C - Optimization Methods for Large-Scale Systems (Spring 2011-12)
+Prof. L. Vandenberghe, UCLA
+ \url{http://www.ee.ucla.edu/~vandenbe/236C/lectures/gradient.pdf}
+\bibitem{xiao} L. Xiao, "Dual averaging method for regularized stochastic learning and online optimization," in Advances in Neural Information Processing Systems 22, Y. Bengio, D. Schuurmans, J. Lafferty, C. K. I. Williams, and A. Culotta, Eds., 2009, pp. 2116-2124.
+\end{thebibliography}
+\end{document}

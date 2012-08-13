@@ -1,0 +1,124 @@
+\documentclass{jsarticle}
+\topmargin=-3.0cm \oddsidemargin=0.1cm \evensidemargin=0.1cm
+\textwidth=16 true cm \textheight=27 true cm
+\setlength{\textheight}{250mm}
+
+\usepackage{amsmath, amssymb}
+\usepackage{fancybox,ascmac}
+
+\begin{document}
+\title{2012年度金融工学・第三回レポート}
+\author{{\normalsize 社会理工学研究科　経営工学専攻　チョウ シホウ　学籍番号 12M42340}}
+
+\date{}
+\maketitle
+
+\def \Pr{{\rm Pr}}
+
+
+\baselineskip 0.6cm
+
+\begin{itembox}[l]{問題3-4-1}
+\begin{enumerate}
+\item 次を示せ：$(\liminf_n E_n)^c = \limsup_n E_n^c$
+\item $E_n = \{x | \frac{1}{n+1} \sin n < x < 1+ \frac{1}{n+1}\sin n\}, n \in \mathbb{N}$とする時、$\limsup_n E_n, \liminf_n E_n$を求めよ。
+
+\end{enumerate}
+\end{itembox}
+{\bf 解答：}
+\begin{enumerate}
+\item 測度空間は補集合と可算和に関して閉じるので
+\begin{eqnarray}
+(\liminf_n E_n)^c &=& (\bigcup_{m \in \mathbb{N}} \bigcap_{m \le n} E_n)^c \\
+&=& \bigcap_{m \in \mathbb{N}}(\bigcap_{m \le n} E_n)^c \text{\,\,\,\,\,\,ド・モルガンの法則により} \\
+&=& \bigcap_{m \in \mathbb{N}}\bigcup_{m \le n} E_n^c \text{\,\,\,\,\,\,\,\,ド・モルガンの法則により} \\
+&=& \limsup_n E_n^c
+\end{eqnarray}
+\item
+すべての$n \in \mathbb{N}$に対して
+\begin{eqnarray}
+\frac{1}{n+1}\sin(n) &<& 1+ \frac{1}{n+1}\sin(n) \\
+\max\{\frac{1}{n+1}\sin(n)\} = \frac{1}{2}\sin 1&,& \max\{1+\frac{1}{n+1}\sin(n)\} = 1+\frac{1}{2}\sin 1 \\
+\lim_{n \to \infty} \frac{1}{n+1}\sin(n) = 0 &,& \lim_{n \to \infty} 1+\frac{1}{n+1}\sin(n) = 1
+\end{eqnarray}
+だから、下極限と上極限はそれぞれ
+\begin{eqnarray}
+\liminf_n E_n &=& \bigcup_{m \in \mathbb{N}} \bigcap_{m \le n} E_n = (\frac{1}{2}\sin 1,1]\\
+\limsup_n E_n &=& \bigcap_{m \in \mathbb{N}} \bigcup_{m \le n} E_n = (0,1+\frac{1}{2}\sin 1)
+\end{eqnarray}
+\end{enumerate}
+
+\begin{itembox}[l]{問題3-4-2}
+Fatou's lemma及び逆向きFatous's lemmaで等号が成立しない様な$\{E_n\}$の例をそれぞれ構成せよ。
+\end{itembox}
+{\bf 解答：}
+\begin{enumerate}
+\item
+Fatou's lemmaは非負可測関数しか適用できないことを基に次の例を構成する\\
+$(\mathcal{S},\mathcal{B},\mu)$は$[0,+\infty)$上の測度空間、$\mathcal{B}$ボレルσ-algebra,$\mu$はレベーク測度、すべての自然数$n$に対して$f_n$を次に定義する
+\[
+f_n(x) = \begin{cases}
+\frac{1}{n} & \text{\,\,\,\,\,\, for $x \in [n,2n]$}, \\
+0 & \text{\,\,\,\,\,\,otherwise}
+\end{cases}
+\]
+関数$f_n$は$\mathcal{S}$から$0$に一様収束し、すべての$x \le 0,n > 0$に対しては$f_n(x)=0$だが、すべての$f_n$の積分が$1$であるので、
+\[
+0 = \int_{\mathcal{S}} \liminf_{n \to \infty} f_n d\mu < \liminf_{n \to \infty} \int_{\mathcal{S}} f_n d\mu = 1
+\]
+等式が成立しない。
+\item
+$\mathcal{S}$を$\mathbb{R}$上の測度空間に定義し、拡張実数値関数$f_n\in \mathbb{N}$を
+\[
+f_n(x) = \begin{cases}
+-\frac{1}{n} & \text{\,\,\,\,\,\, for $x \in [n,2n]$}, \\
+0 & \text{\,\,\,\,\,\,otherwise}
+\end{cases}
+\]
+とおくと、可積分関数$g(x)=0$が存在し、$\forall n \in \mathbb{N}, f_n \le g$ので,非負列$(g-f_n)$が上記の例により等式が成り立たないので、逆向きのFatou's lemmaの等式も成立しない。
+\[
+-1 \le \limsup_{n \to \infty} \int_{\mathcal{S}} f_n d\mu < \int_{\mathcal{S}} \limsup_{n \to \infty} f_n d\mu= 0
+\]
+
+\end{enumerate}
+
+\begin{itembox}[l]{問題5-1-1}
+確率変数$x_1,x_2,x_3$で、$\{x_1,x_2\}$は独立、$\{x_2,x_3\}$は独立、$\{x_1,x_3\}$は独立だが、$\{x_1,x_2,x_3\}$は独立ではない様なものの例を作れ。、
+\end{itembox}
+{\bf 解答：}二つのコインを同時に投げるの確率を考え、確率空間$(\Omega,\mathcal{F},P)$上の独立変数$x_1,x_2,x_3$とそれぞれの事象は\\
+\[\text{コイン1が表：} x_1 \in A_1 =  (-\infty,0] \text{\,\,\,ならば\,\,\,} x_1=1\]
+\[\text{コイン1が裏：} x_1 \in B_1 = (0,+\infty) \text{\,\,\,ならば\,\,\,}x_1=0 \]
+\[\text{コイン2が表：} x_2 \in A_2 =  (-\infty,-\frac{1}{2}] \cup (0,\frac{1}{2}] \text{\,\,\,ならば\,\,\,} x_2=1\]
+\[\text{コイン2が裏：} x_2 \in B_2 =   (-\frac{1}{2},0] \cup (\frac{1}{2},+\infty) \text{\,\,\,ならば\,\,\,}x_2=0\]
+\[\text{結果が同じ：} x_3 \in A_3 = (-\infty,-\frac{1}{2}] \cup (\frac{1}{2},+\infty) \text{\,\,\,ならば\,\,\,} x_3=1 \]
+\[\text{結果が違い：} x_3 \in B_3 = (-\frac{1}{2},0] \cup (0,\frac{1}{2}] \text{\,\,\,ならば\,\,\,} x_3=0\]
+すると、事象$X \in \mathcal{F}$に対するの確率空間測度$P$も定義できる。
+\[
+P(X) = \begin{cases}
+\frac{1}{4} \,\,\,\,\,\, \text{for\,\,\,} x \in (-\infty,-\frac{1}{2}]   \\
+\frac{1}{4} \,\,\,\,\,\, \text{for\,\,\,} x \in  (-\frac{1}{2},0]   \\
+\frac{1}{4} \,\,\,\,\,\, \text{for\,\,\,} x \in (0,\frac{1}{2}]  \\
+\frac{1}{4} \,\,\,\,\,\, \text{for\,\,\,} x \in (\frac{1}{2},+\infty)   \\
+0 \,\,\,\,\,\, \text{otherwise}
+\end{cases}
+\]
+明らかに、$\{x_1,x_2\}$は独立、$\{x_2,x_3\}$は独立、$\{x_1,x_3\}$は独立だが、$\{x_1,x_2,x_3\}$は独立ではない。一つの反例を挙げれば示せる。
+\[
+P(x_1 \in A_1, x_2 \in A_2, x_3 \in A_3) = \frac{1}{4} \neq P(x_1 \in A_1)P(x_2 \in A_2)P(x_3 \in A_3) = \frac{1}{8}
+\]
+その意味は、コイン1もコイン2も表ならば、両方の結果が同じであることも決めたので、お互いには独立ではない。
+
+\begin{itembox}[l]{おまけ問題}
+$\mathcal{S},\mathcal{T},\mathcal{U}$を可測空間とし、$f:\mathcal{S} \mapsto \mathcal{T},g:\mathcal{T} \mapsto \mathcal{U}$という二つの写像が与えられている。$g$が可測で$g$と$f$の合成$g \circ f:\mathcal{S} \mapsto \mathcal{U}$が可測であるとき$f$は可測といえるか？
+\end{itembox}
+{\bf 解答：}
+$(X_S,\mathcal{S}),(\mathbb{R},\mathcal{T}),(\mathbb{R},\mathcal{U})$を可測空間とし、$X_S = [0,1],A \subset X_S$とおく。ただし、$A$は非可測集合である。そして、$f:\mathcal{S} \mapsto \mathcal{T}$を次に定義する。
+\begin{equation}
+f(X)=\begin{cases}
+1   &\text{\,\,\,\,\, for\,\,\,} X \in A \\
+-1 &\text{\,\,\,\,\, otherwise}
+\end{cases}
+\end{equation}
+一方、$g(X)=X^2$とおくと、$(g \circ f)(X)=g(f(X))=(f(X))^2$。$-1 \notin X_S$ので$f$は非可測関数である、また、$\forall x \in \mathbb{R}, (g \circ f)^{-1}(X) \in [0,1],g^{-1}(X) \in \mathbb{R}$ので、$ (g \circ f)(X)$と$g(X)$は可測関数であることがわかる。ゆえに、$g$が可測で$g$と$f$の合成$g \circ f:\mathcal{S} \mapsto \mathcal{U}$が可測であるとき$f$は必ずしも可測とはいえない。
+
+\end{document}

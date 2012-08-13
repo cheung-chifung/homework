@@ -1,0 +1,141 @@
+\documentclass[10pt,a4paper]{jsarticle}
+
+\usepackage{otf}
+\usepackage{amsmath}
+
+\setlength{\textwidth}{\fullwidth}
+\setlength{\textheight}{40\baselineskip}
+\addtolength{\textheight}{\topskip}
+\setlength{\voffset}{-0.1in}
+\setlength{\headheight}{10pt}
+\setlength{\headsep}{10pt}
+
+\begin{document}
+\begin{flushright}
+輪読ゼミ・チョウ シホウ・12M42340
+\end{flushright}
+\section{SVMの最適化}
+
+\subsection{問題点}
+
+\begin{itemize}
+\item 大きいデータサイズでは、汎用QPソルバーでは計算困難。
+\item ヘッセ行列は密（dense）と悪条件（ill-conditioned）。
+\end{itemize}
+
+\subsection{SVMの主問題と双対問題}
+\begin{equation}
+\begin{split}
+\text{minimize\,\,\,\,\,\,} & \frac{1}{2} \|w\|^2 +C\sum_{i=1}^N\xi_{i}\\
+\text{subject to\,\,\,\,\,\,} & y_{i}(w^{T}x_{i}+b) \ge 1 - \xi_{i} \\
+&\xi_{i} \ge 0\, , 1 \le i \le N.
+\end{split}
+\end{equation}
+\begin{equation}
+\begin{split}
+\text{minimize\,\,\,\,\,\,} & \frac{1}{2}\sum_{i=1}^N\sum_{j=1}^N\alpha_{i}\alpha_{j}y_{i}y_{j}x_{i}^Tx_{j}-\sum_{i=1}^N\alpha_{i}\\
+\text{subject to\,\,\,\,\,\,} & \sum_{i=1}^N y_{i}a_{i}=0\\
+&0 \le \alpha_{i} \le C \end{split}
+\end{equation}
+
+
+\subsection{Karush-Kuhn-Tucker Conditions}
+
+\[ \nabla f(x^*) + \sum_{i=1}^m \mu_i \nabla g_i(x^*) + \sum_{j=1}^l \lambda_j \nabla h_j(x^*) = 0 \]
+\[ \text{主不等式制約：\,\,\,\,}  g_i(x^*) \le 0, \mbox{ for all } i = 1, \ldots, m \]
+\[ \text{主等式制約：\,\,\,\,} h_j(x^*) = 0, \mbox{ for all } j = 1, \ldots, l \,\! \]
+\[ \text{双対不等式制約：\,\,\,\,} \mu_i \ge 0, \mbox{ for all } i = 1, \ldots, m \]
+\[ \text{相補性条件：\,\,\,\,} \mu_i g_i (x^*) = 0, \mbox{for all}\; i = 1,\ldots,m. \]
+
+\subsection{SVMのKKT条件}
+\[ L(w,b,\xi;\alpha,\beta) = \frac{1}{2} w^Tw +C\sum_{i=1}^N\xi_{i} + \sum_{i=1}^N\alpha_{i}(1-\xi_{i}-y_{i}(w^Tx_{i} +b))  + \sum_{i=1}^N\beta_{i}(-\xi_{i}) \]
+\begin{equation}
+ (1-\xi_{i}-y_{i}(w^Tx_{i} +b)) \le 0, -\xi_{i} \le 0
+\end{equation}
+\begin{equation}
+\alpha_{i} \ge 0, \beta_{i} \ge 0
+\end{equation}
+\begin{equation}
+\alpha_{i}(1-\xi_{i}-y_{i}(w^Tx_{i} +b)) = 0, \beta_{i}\xi_{i} = 0
+\end{equation}
+\begin{equation}
+\nabla w = w-\sum_{i=1}^N \alpha_{i}y_{i}x_{i}= 0, \nabla b = \sum_{i=1}^N y_{i}\alpha_{i} = 0, \nabla \xi_{i } = C - \alpha_{i} - \beta_{i} = 0
+\end{equation}
+\subsection{Kernel Trick}
+
+\begin{itemize}
+\item{入力データを高次元な空間に（非線形）射像する}
+\item{特徴空間で線形分離できる。}
+\item{計算複雑度の増大を抑えられる。}
+
+\end{itemize}
+
+\[ \text{例：\,\,\,\,\,}  K(x,z)=(x^T z + c )^2 = \sum_{i,j=1}^{N}(x_{i}x_{j})(z_{i}z_{j})+\sum_{i=1}^{N}(\sqrt{2}cx_{i}\sqrt{2}cz_{i}) + c^2 = \phi(x)^T\phi(z) \]
+\[ x =  \begin{pmatrix}
+x_{1} \\
+x_{2}
+\end{pmatrix},
+\phi(x) = \begin{pmatrix}
+x_{1}x_{1} \\
+x_{1}x_{2} \\
+x_{2}x_{1} \\
+x_{2}x_{2} \\
+\sqrt{2}cx_{1} \\
+\sqrt{2}cx_{2} \\
+c
+\end{pmatrix} \]
+
+\subsection{SVMの最適解}
+
+\begin{equation}
+u=w^Tx +b = (\sum_{i=1}^N \alpha_{i}y_{i}x_{i})^Tx +b = \sum_{i=1}^N \alpha_{i}y_{i}K(x_{i},x) +b
+\end{equation}
+
+\subsection{Support Vector}
+
+\[ a_{i} = 0 \Leftrightarrow y_{i}u_{i} \ge 1  \]
+\[ 0 < a_{i} < C \Leftrightarrow y_{i}u_{i} = 1  \]
+\[ a_{i} = C \Leftrightarrow y_{i}u_{i} \le 1  \]
+
+\section{伝統的なアプローチ}
+\subsection{Chunking}
+
+Vapnikによる戦略が最も簡単なものであるが、実用性には制限があると思われる。
+
+\begin{itemize}
+\item Chunking, Vapnik 1982
+\end{itemize}
+
+\subsection{Decomposition}
+
+QPのサイズが大きくなるのを防ぐために、問題の大きさをあらかじめ制限してしまう方法である。サポートベクターの候補となる変数をすべてQPの変数として扱わずにその一部のみを動かすことによって、問題のサイズを小規模に止めて反復を繰り返す。
+
+\begin{itemize}
+\item Osuna's method [Osuna et al., 1997]
+\item Sequential minimal optimization/SMO [Platt, 1998]
+\item LIBSVM [Fan et al., 2005]
+\item SVM\textsuperscript{light} [Joachims, 1999]
+\end{itemize}
+
+\subsection{Sequential minimal optimization}
+
+\begin{enumerate}
+\item $\alpha$に初期値を設定する。
+\item 2変数$\alpha_{i},\alpha_{j}$を選択する。
+\item $\alpha_{i},\alpha_{j}$に関する2変数部分最適化問題を解く。
+\item $\alpha$と勾配の更新。
+\item KKT条件を判定し、満たせば終了、そうでない場合には1へ。
+
+\end{enumerate}
+
+\section{その他のSVM最適化へのアプローチ}
+
+\begin{itemize}
+\item 内点法 [Ferris and Munson, 2002][Gertz and Wright 2003]
+\item 主問題で解く [SVM\textsuperscript{perf} Joachims 2006][Shalev-Shwartz et al.]
+\item オンラインSVM [Buttou et al. 2005]
+\end{itemize}
+
+
+
+\end{document}

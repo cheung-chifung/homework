@@ -1,0 +1,79 @@
+\documentclass[a4paper,11pt]{jsarticle}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{amssymb}
+\usepackage{ascmac}
+\usepackage{subfigure}
+\usepackage{bm}
+\usepackage{setspace}
+\usepackage{cases}%左かっこつけるときに必要だった
+\usepackage{leftidx}%行列表示用？
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{url}
+\usepackage{bm}
+\usepackage{verbatim}
+\usepackage{calc} 
+
+\setlength{\headsep}{5mm}
+\setlength{\oddsidemargin}{-0.5zw} %→にズラす
+\setlength{\textheight}{37\baselineskip}
+\addtolength{\textheight}{\topskip}
+\setlength{\topmargin}{-10mm}
+\setlength{\textwidth}{45zw} %文章の幅
+\setlength{\textheight}{215mm}
+\setlength{\parindent}{1zw}%箇条書きの一文字下げ
+\pagestyle{fancy}
+
+\newtheorem{theorem}{定理}
+\newtheorem{prop}[theorem]{命題}
+\newtheorem{lemma}[theorem]{補題}
+\newtheorem{cor}[theorem]{系}
+\newtheorem{example}[theorem]{例}
+\newtheorem{definition}[theorem]{定義}
+\newtheorem{rem}[theorem]{注意}
+\newtheorem{guide}[theorem]{参考}
+\renewcommand{\proofname}{証明}
+
+\numberwithin{theorem}{section}  % 定理番号を「定理2.3」のように印刷
+\numberwithin{equation}{section} % 式番号を「(3.5)」のように印刷
+\newcommand{\argmax}{\mathop{\rm arg~max\,}\limits}
+\newcommand{\argmin}{\mathop{\rm arg~min\,}\limits}
+\newcommand{\st}{\mathop{\rm subject~to\,}\limits}
+\newcommand{\sign}{\mathop{\rm sign\,}\limits}
+
+\newcommand{\dom}{\mathop{\mathrm{\bf dom}}\nolimits}
+\newcommand{\minimize}{\mathop{\mathrm{\rm minimize}}\limits}
+\newcommand{\maximize}{\mathop{\mathrm{\rm maximize}}\limits}
+
+\lhead{2012年度計算数理応用ーアルゴリズム・第二回レポート}
+\chead{}
+\rhead{12M42340}
+\lfoot{チョウ　シホウ}
+\cfoot{\thepage}
+\rfoot{6月11日}
+\renewcommand{\footrulewidth}{0.4pt}
+\title{2012年度計算数理応用ーアルゴリズム・第二回レポート}
+\author{12M42340　チョウ　シホウ}
+\date{6月11日}
+
+\begin{document}
+\pagenumbering{roman}
+%\tableofcontents
+%\cleardoublepage
+\pagenumbering{arabic}
+\renewcommand{\thepart}{\arabic{part}}
+
+%\thispagestyle{empty}
+\begin{itembox}[l]{テーマ１・問１}
+与えられたグラフと$K$に対し，$K$色を使った点彩色を一つ求める（もしあれば）アルゴリズムで，領域計算量が頂点数$n$の多項式，時間計算量が適当な定数$c_1$，$0 < c_1 < 3$のもとで，頂点数$n$に対して$O^*(c_1^n)$となるようなものを設計したい．その際，今回の講義で省略した次の点について明確に説明せよ．
+\begin{enumerate}
+\item 与えられたグラフと$K$に対して，$c_K$を計算するができたとして，その計算法を用いて，点彩色を実際に求めるアルゴリズムを示せ．
+\item 与えられた$n$頂点のグラフに対して，その独立点集合の数を求める多項式領域量かつ$O^*(c_2^n)$時間計算量のアルゴリズムを示せ．ただし，$c_2$は$0<c_2<2$を満たす適当な定数であればよい．（注：要するに補題1.8を示せばいい）
+\end{enumerate}
+\end{itembox}
+
+\end{document}

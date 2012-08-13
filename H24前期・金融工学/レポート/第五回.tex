@@ -1,0 +1,180 @@
+\documentclass{jsarticle}
+\topmargin=-3.0cm \oddsidemargin=0.1cm \evensidemargin=0.1cm
+\textwidth=16 true cm \textheight=27 true cm
+\setlength{\textheight}{250mm}
+
+\usepackage{amsmath, amssymb}
+\usepackage{fancybox,ascmac}
+
+\begin{document}
+\title{2012年度金融工学・第五回レポート}
+\author{{\normalsize 社会理工学研究科　経営工学専攻　チョウ シホウ　学籍番号 12M42340}}
+\date{}
+\maketitle
+
+\def \Pr{{\rm Pr}}
+
+
+\baselineskip 0.6cm
+
+\begin{itembox}[l]{5月16日・練習問題1}
+株価：$\{ S_n \}_{n=0}^\infty$\\
+収益率：$R_n = \frac{S_n - S_{n-1}}{S_{n-1}}, \,\,\, n \ge 1,\,\,\, \{x_n\}_{n=1}^\infty \text{ is i.i.d.}$\\
+$E[x_n]=0,E[x_n^2]=1$とする．\\
+今，$R_n = m + \sqrt{v} x_n, \,\,(m \in \mathbb{R},v>0)$と表されると仮定する（収益率のモデル化）．このとき，期待収益率は$E[R_n]=m$，収益率の分散は$V[R_n]=E[(R_n-E[R_n])^2]=v$である．また，$S_n=S_{n-1}+S_{n-1}R_n=S_{n-1}(1+m+\sqrt{v}x_n)$，$\mathcal{F}_n = \sigma(x_1,\dots,x_n)$とおく，
+\begin{enumerate}
+\item $E[S_4|\mathcal{F}_2]=?$
+\item $E[S_{n+3}|\mathcal{F}_n]=?$
+\end{enumerate}
+\end{itembox}
+{\bf 解答：}
+\begin{enumerate}
+\item
+$S_n=S_{n-1}(1+m+\sqrt{v}x_n)$ので，$S_n=S_0\prod_{i=1}^n (1+m+\sqrt{v}x_i)$．\\
+条件付き期待値の性質:
+\begin{enumerate}
+\item $X$が$\mathcal{G}$-可測ならば，$E[X|\mathcal{G}] =X$
+\item $X$と$\mathcal{G}$が独立ならば，$E[X|\mathcal{G}] = E[X]$
+\end{enumerate}
+より
+\[
+\begin{split}
+E[S_4|\mathcal{F}_2] &=\,\,\, E[S_0\prod_{i=1}^4 (1+m+\sqrt{v}x_i) | \sigma(x_1,x_2)]\\
+&=\,\,\, S_0E[\prod_{i=1}^2 (1+m+\sqrt{v}x_i) | \sigma(x_1,x_2)]E[\prod_{i=3}^4 (1+m+\sqrt{v}x_i) | \sigma(x_1,x_2)]\\
+&=\,\,\, \Bigr( S_0\prod_{i=1}^2 (1+m+\sqrt{v}x_i) \Bigr) E[\prod_{i=3}^4(1+m+\sqrt{v}x_i)] \,\,\,\,\ \text{性質(a)(b)より} \\
+&=\,\,\, S_2(1+m)^2
+\end{split}
+\]
+\item 同様に，
+\[
+\begin{split}
+E[S_{n+3}|\mathcal{F}_n] &=\,\,\, E[S_0\prod_{i=1}^{n+3} (1+m+\sqrt{v}x_i) | \sigma(x_1,\dots,x_n)]\\
+&=\,\,\, S_0E[\prod_{i=1}^n (1+m+\sqrt{v}x_i) | \sigma(x_1,\dots,x_n)]E[\prod_{i=n+1}^{n+3} (1+m+\sqrt{v}x_i) | \sigma(x_1,\dots,x_n)]\\
+&=\,\,\, \Bigr( S_0\prod_{i=1}^n (1+m+\sqrt{v}x_i) \Bigr) E[\prod_{i=n+1}^{n+3} (1+m+\sqrt{v}x_i)]\\
+&=\,\,\, S_n(1+m)^3
+\end{split}
+\]
+\end{enumerate}
+
+\newpage
+\begin{itembox}[l]{5月16日・練習問題2}
+金利は$r$，$S_n^0=(1+r)^n$，株式の現在価値は$\tilde{S_n} = \frac{S_n}{S_n^0}$
+
+$\{ \tilde{S_n}\}_{n=0}^\infty $がマルチンゲールになるための必要十分条件を求めよ．
+%（$\{ x_n\}_{n=0}^\infty \,\,\,\text{adapted},\,\,\,  E[x_n] < \infty, \forall n,\{x_n\}$）
+\end{itembox}
+{\bf 解答：}
+
+マルチンゲールの定義より，$\{ \tilde{S_n}\}_{n=0}^\infty $が$\{\Omega,\mathcal{F},P\}$上のマルチンゲールになるための必要十分条件は
+\begin{enumerate}
+\item 任意の時刻$n$について$\tilde{S}_n$は$\mathcal{F}_n$可測確率変数である（Adapted）．
+\item 任意の時刻$n$について$\tilde{S}_n$は可積分である．
+\[
+\forall n > 0, \,\, E[\tilde{S}_n] < \infty
+\]
+\item 任意の時刻$n$について$t>0, E[\tilde{S}_{n+t}|\mathcal{F}_n]=\tilde{S}_n$．
+\end{enumerate}
+株式の現在価値$\tilde{S}_n$は
+\[
+\tilde{S}_n = \frac{S_0\prod_{i=1}^n (1+m+\sqrt{v}x_i)}{ (1+r)^n }
+\]
+$n$期までの情報を知り，$n+t$期以降の期待値は
+\[
+\begin{split}
+E[\tilde{S}_{n+t}|\mathcal{F}_n] &=\,\,\, E\Bigr[ \frac{S_0\prod_{i=1}^{n+t} (1+m+\sqrt{v}x_i)}{ (1+r)^{n+t} } \Bigr|  \sigma(x_1,\dots,x_n)\Bigr]\\
+&=\,\,\, E\Bigr[ \frac{S_0\prod_{i=1}^{n} (1+m+\sqrt{v}x_i)}{ (1+r)^{n+t} } \Bigr|  \sigma(x_1,\dots,x_n)\Bigr]E\Bigr[\prod_{i=n+1}^{n+t} (1+m+\sqrt{v}x_i) \Bigr|  \sigma(x_1,\dots,x_n)\Bigr]\\
+&=\,\,\, E\Bigr[ \frac{S_0\prod_{i=1}^{n} (1+m+\sqrt{v}x_i)}{ (1+r)^{n+t} } \Bigr|  \sigma(x_1,\dots,x_n)\Bigr](1+m)^t\\
+&=\,\,\, \tilde{S_n}\Bigr(\frac{1+m}{1+r}\Bigr)^t
+\end{split}
+\]
+明らかに，$m=t$の時のみ，$E[\tilde{S}_{n+t}|\mathcal{F}_n]=\tilde{S}_n$が成り立つので，条件1,2と$m=t$三つの条件は$\{ \tilde{S_n}\}_{n=0}^\infty $がマルチンゲールになるための必要十分条件
+
+
+
+\newpage
+\begin{itembox}[l]{5月26日・練習問題1}
+$\{w_t\}_{t \ge 0},\{\tilde{w}_t\}_{t \ge 0}$，1-dim，BM独立．\\
+$\rho \in (-1,1), B_t := \rho w_t + \sqrt{1-\rho^2}\tilde{w}_t,(t \ge 0)$
+\begin{enumerate}
+\item $\{B_t\}_{t\ge 0}$がBMですることを確かめよ（特性関数を使うべし）．
+\item $B_t$と$w_t$の相関係数．
+\end{enumerate}
+\end{itembox}
+{\bf 解答：}
+\begin{enumerate}
+\item
+\begin{itemize}
+\item
+$B_0 = \rho w_0 + \sqrt{1-\rho^2} \tilde{w}_0 = 0$
+\item
+$w_t$と$\tilde{w}_t$は確率$1$（almost surely）で連続であるので，合成関数の連続性より，$B_t := \rho w_t + \sqrt{1-\rho^2}\tilde{w}_t$も連続．
+\item
+%{\bf 定常増分性}\\
+$0 \le s < t$，$w_t-w_s$と$\tilde{w}_t - \tilde{w}_s$は定常増分性を持つので，平均$0$分散$t-s$の正規分布に従う，それぞれの特性関数は
+\[
+\begin{split}
+E[\exp(i \alpha (w_t-w_s))] &=\,\,\, \exp(i\mu \alpha -\frac{1}{2}\sigma^2\alpha^2)\\
+E[\exp(i \alpha (\tilde{w}_t-\tilde{w}_s))] &=\,\,\, \exp(i\tilde{\mu}\alpha-\frac{1}{2}\tilde{\sigma}^2\alpha^2)
+\end{split}
+\]
+ただし，$\mu,\tilde{\mu},\sigma,\tilde{\sigma}$はそれぞれ$(w_t - w_s),(\tilde{w}_t - \tilde{w}_s)$の平均と分散である．次は，$B_t-B_s$の特性関数を求める．
+\[
+\begin{split}
+E[\exp(i \alpha (B_t-B_s))] &= \,\,\, E[\exp(i \alpha (\rho w_t + \sqrt{1-\rho^2}\tilde{w}_t) - i \alpha (\rho w_s + \sqrt{1-\rho^2}\tilde{w}_s))] \\
+&= \,\,\, E[\exp(i \alpha \rho ( w_t -  w_s)) \exp( i \alpha \sqrt{1-\rho^2}(\tilde{w}_t - \tilde{w}_s))]\\
+&= \,\,\, E[\exp(i \alpha \rho ( w_t -  w_s))]E[ \exp( i \alpha \sqrt{1-\rho^2}(\tilde{w}_t - \tilde{w}_s))]\\
+&=\,\,\, \exp \Bigr(i\mu \rho \alpha -\frac{1}{2}\sigma^2\alpha^2\rho^2 \Bigr) \exp \Bigr(i\tilde{\mu}\alpha\rho-\frac{1}{2}\tilde{\sigma}^2\alpha^2(1-\rho^2) \Bigr)\\
+%&=\,\,\, E[\exp(it (w_t-w_s))^\rho]E[\exp(it (\tilde{w}_t-\tilde{w}_s))^{\sqrt{1-\rho^2}}]\\
+%&=\,\,\, E[\exp(it (w_t-w_s))]^\rho E[\exp(it (\tilde{w}_t-\tilde{w}_s))]^{\sqrt{1-\rho^2}}\\
+%&=\,\,\, \exp \Bigr(i\mu t-\frac{1}{2}\sigma^2t^2 \Bigr)^\rho \exp \Bigr(i\tilde{\mu}t-\frac{1}{2}\tilde{\sigma}^2t^2 \Bigr)^{\sqrt{1-\rho^2}}\\
+%&=\,\,\, \exp \Bigr( i(\rho \mu + \sqrt{1-\rho^2}\tilde{\mu} )t - \frac{1}{2}( \rho \sigma^2 + \sqrt{1-\rho^2}\tilde{\sigma}^2)t^2 \Bigr)
+%&=\,\,\, \exp \Bigr(-\frac{1}{2}t^2 \Bigr)^\rho \exp \Bigr(-\frac{1}{2}t^2 \Bigr)^{\sqrt{1-\rho^2}}\\
+%&=\,\,\, \exp \Bigr(-\frac{1}{2}(\rho + {\sqrt{1-\rho^2}})t^2 \Bigr)
+&=\,\,\, \exp \Bigr(i(\mu\rho + \tilde{\mu}\sqrt{1-\rho^2})\alpha -\frac{1}{2}(\rho^2 \sigma^2 + (1-\rho^2)\tilde{\sigma}^2)\alpha^2 \Bigr)
+\end{split}
+\]
+従って，$B_t-B_{t-1}$は$N\Bigr(\rho \mu + \sqrt{1-\rho^2}\tilde{\mu} ,\rho^2 \sigma^2 + (1-\rho^2)\tilde{\sigma}^2 \Bigr)=N(0, t-s)$の正規分布に従い，{\bf 定常増分性}を持つ．
+\item
+%{\bf 独立増分性}\\
+定常増分性より，$w_t-w_s$と$\tilde{w}_t - \tilde{w}_s$の平均も$0$である．すべての$0<n<m,0 \le s < t$に対して
+\[
+\begin{split}
+\text{cov}(w_{t_m} - w_{s_m }, w_{t_n} - w_{s_n})=&E[(w_{t_m} - w_{s_m })(w_{t_n} - w_{s_n})]=0\\
+\text{cov}(\tilde{w}_{t_m} - \tilde{w}_{s_m }, \tilde{w}_{t_n} - \tilde{w}_{s_n})=&E[(\tilde{w}_{t_m} - \tilde{w}_{s_m })(\tilde{w}_{t_n} - \tilde{w}_{s_n})]=0
+\end{split}
+\]
+が成り立つ，また，$B_t-B_s$の平均は$0$であるので，
+\[
+\begin{split}
+&\,\,\,  \text{cov}(B_{t_m} - B_{s_m }, B_{t_n} - B_{s_n})\\
+=&\,\,\, E[(B_{t_m} - B_{s_m })(B_{t_n} - B_{s_n})]\\
+=&\,\,\, E \Bigr[ \Bigr( \rho (w_{t_m} - w_{s_m}) + \sqrt{1-\rho^2}(\tilde{w}_{t_m} - \tilde{w}_{s_m}) \Bigr)\Bigr( \rho (w_{t_n} - w_{s_n}) + \sqrt{1-\rho^2}(\tilde{w}_{t_n} - \tilde{w}_{s_n}) \Bigr)  \Bigr]\\
+=&\,\,\, \rho^2 E \Bigr[   (w_{t_m} - w_{s_m})(w_{t_n} - w_{s_n}) \Bigr] + (1-\rho^2)E \Bigr[ (\tilde{w}_{t_m} - \tilde{w}_{s_m})(\tilde{w}_{t_n} - \tilde{w}_{s_n})\Bigr]  + \\
+&\,\,\,\,\,\,\,\,\,\rho\sqrt{1-\rho^2}\Bigr( E \Bigr[(w_{t_n} - w_{s_n})(\tilde{w}_{t_m} - \tilde{w}_{s_m})\Bigr] +  E \Bigr [(w_{t_m} - w_{s_m})(\tilde{w}_{t_n} - \tilde{w}_{s_n}) \Bigr] \Bigr)\\
+=&\,\,\, \rho\sqrt{1-\rho^2}\Bigr( E \Bigr[(w_{t_n} - w_{s_n})(\tilde{w}_{t_m} - \tilde{w}_{s_m})\Bigr] +  E \Bigr [(w_{t_m} - w_{s_m})(\tilde{w}_{t_n} - \tilde{w}_{s_n}) \Bigr] \Bigr)\\
+=&\,\,\, 0
+\end{split}
+\]
+従って，{\bf 独立増分性}を持つ．\\
+以上の四つの条件を満たすので，$\{B_t\}_{t\ge0}$はBMである．
+\end{itemize}
+\item
+BMの定常増分性より
+\[ B_t = B_t - B_0 = N(0, t) \]
+\[ w_t = w_t - w_0 = N(0,t) \]
+\[ \tilde{w}_t = \tilde{w}_t - \tilde{w}_0 = N(0,t) \]
+$B_t$と$w_t$の相関係数$\theta$は
+\[
+\begin{split}
+\theta &=\,\,  \frac{ E[B_t w_t] - E[B_t]E[w_t] }{ \sqrt{ (E[B_t^2] - E[B_t]^2) (E[w_t^2] - E[w_t]^2) } }\\
+&=\,\,  \frac{ E[B_t w_t] }{ \sqrt{ t^2 }}\\
+&=\,\,  \frac{ E[ (\rho w_t + \sqrt{1-\rho^2}\tilde{w}_t)w_t ] }{ t}\\
+&=\,\,  \frac{ \rho E[w_t^2] + \sqrt{1-\rho^2}E[\tilde{w}_t w_t] }{ t}\\
+&=\,\,  \frac{ \rho E[w_t^2] }{ t}\\
+&=\,\,  \rho
+\end{split}
+\]
+
+\end{enumerate}
+
+\end{document}

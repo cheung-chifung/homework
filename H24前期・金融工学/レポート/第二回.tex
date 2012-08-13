@@ -1,0 +1,118 @@
+\documentclass{jsarticle}
+\topmargin=-3.0cm \oddsidemargin=0.1cm \evensidemargin=0.1cm
+\textwidth=16 true cm \textheight=27 true cm
+
+\usepackage{amsmath, amssymb}
+\usepackage{fancybox,ascmac}
+
+\begin{document}
+\title{2012年度金融工学・第二回レポート}
+\author{{\normalsize 社会理工学研究科　経営工学専攻　チョウ シホウ　学籍番号 12M42340}}
+\date{}
+\maketitle
+
+\def \Pr{{\rm Pr}}
+
+
+\baselineskip 0.6cm
+
+\begin{itembox}[l]{問題2-7-1}
+次の成立を示せ（inclusion-exclusion formula）\\
+測度空間$(\mathcal{S},\mathcal{B},\mu)$、$\mu(\mathcal{S})<+\infty \Longrightarrow$
+$\mu\biggl(\bigcup_{i=1}^n A_i\biggr)  =\sum_{k=1}^n (-1)^{k-1}\sum_{\scriptstyle I\subset\{1,\ldots,n\}\atop\scriptstyle|I|=k} \mu(A_I),$
+
+\end{itembox}
+{\bf 解答：}
+\begin{enumerate}
+\item $n=1$の場合では明らかに成立。
+\item $n=2$の場合では、$A_{1},A_{2} \in \mathcal{B}$にする、$A_{1} \cup A_{2} = A_{1} \cup (A_{2} \setminus A_{1}) = A_{1} \cup (A_{2} \setminus (A_{1} \cup A_{2}))$、測度空間の有限加法性により、
+\begin{equation}
+\mu(A_{1} \cup A_{2}) = \mu(A) + \mu(A_{2} \setminus (A_{1} \cap A_{2})) = \mu(A_{1}) + \mu(A_{2}) - \mu(A_{1} \cap A_{2}) \label{1}
+\end{equation}
+成立。
+\item $n>2$の場合では、\\
+$\mu\biggl(\bigcup_{i=1}^n A_i\biggr)  =\sum_{k=1}^n (-1)^{k-1}\sum_{\scriptstyle I\subset\{1,\ldots,n\}\atop\scriptstyle|I|=k} \mu(A_I)$が正しいと仮定すると、
+\[
+\mu\biggl(\bigcup_{i=1}^{n+1} A_i\biggr)  = \mu\Biggl(\biggr(\bigcup_{i=1}^n A_i\biggr) \cup A_{n+1}  \Biggr)
+\]
+式（1）により
+\[
+\mu\biggl(\bigcup_{i=1}^{n+1} A_i\biggr)  = \mu\biggr(\bigcup_{i=1}^n A_i\biggr) + \mu( A_{n+1} ) - \mu\Biggl(\biggr(\bigcup_{i=1}^n A_i\biggr) \cap A_{n+1}  \Biggr)
+\]
+ド・モルガンの法則により
+\[
+\mu\biggl(\bigcup_{i=1}^{n+1} A_i\biggr)  = \mu\biggr(\bigcup_{i=1}^n A_i\biggr) + \mu( A_{n+1} ) - \mu\Biggl(\bigcup_{i=1}^n (A_i \cap A_{n+1})\Biggr)
+\]
+$B_{i} = A_i \cap A_{n+1}$にすると
+\[
+\mu\biggl(\bigcup_{i=1}^{n+1} A_i\biggr)  = \mu\biggr(\bigcup_{i=1}^n A_i\biggr) + \mu( A_{n+1} ) - \mu\biggl(\bigcup_{i=1}^n B_{i}\biggr)
+\]
+仮説を使うと
+\begin{equation}
+\begin{split}
+\mu\biggl(\bigcup_{i=1}^{n+1} A_i\biggr)  & =  \sum_{k=1}^n (-1)^{k-1}\sum_{\scriptstyle I\subset\{1,\ldots,n\}\atop\scriptstyle|I|=k} \mu(A_I) + \mu( A_{n+1} ) - \sum_{k=1}^n (-1)^{k-1}\sum_{\scriptstyle I\subset\{1,\ldots,n\}\atop\scriptstyle|I|=k} \mu(B_I) \\
+& = \sum_{k=1}^n (-1)^{k-1}\sum_{\scriptstyle I\subset\{1,\ldots,n\}\atop\scriptstyle|I|=k} \mu(A_I) + \mu( A_{n+1} ) + \sum_{k=1}^n (-1)^{k}\sum_{\scriptstyle I\subset\{1,\ldots,n\}\atop\scriptstyle|I|=k} \mu(B_I) \\
+& = \sum_{k=1}^n (-1)^{k-1}\sum_{\scriptstyle I\subset\{1,\ldots,n\}\atop\scriptstyle|I|=k} \mu(A_I) + \mu( A_{n+1} ) + \sum_{k=1}^{n+1} (-1)^{k}\sum_{\scriptstyle I\subset（\{1,\ldots,n+1\} \setminus \{n+1\} ） \atop\scriptstyle|I|=k} \mu(A_I) \label{2}
+\end{split}
+\end{equation}
+$A_{n+1}$に対して仮説を使うと
+\[
+\mu(A_{n+1}) = \sum_{k=1}^{n+1} (-1)^{k-1}\sum_{\scriptstyle I\subset\{n+1\}\atop\scriptstyle|I|=k} \mu(A_I)
+\]
+（2）に入れると
+\begin{equation}
+\begin{split}
+\mu\biggl(\bigcup_{i=1}^{n+1} A_i\biggr)  & =  \sum_{k=1}^n (-1)^{k-1}\biggr(\sum_{\scriptstyle I\subset\{1,\ldots,n\}\atop\scriptstyle|I|=k} \mu(A_I) +  \sum_{\scriptstyle I\subset\{n+1\}\atop\scriptstyle|I|=k} \mu(A_I) + \sum_{\scriptstyle I\subset（\{1,\ldots,n+1\} \setminus \{n+1\} ） \atop\scriptstyle|I|=k} \mu(A_I) \biggr) \\
+&=  \sum_{k=1}^{n+1} (-1)^{k-1}\sum_{\scriptstyle I\subset\{1,\ldots,n+1\}\atop\scriptstyle|I|=k} A_{i}
+\end{split}
+\end{equation}
+仮説が成立。
+\end{enumerate}
+故に、inclusion-exclusion formulaが成立。
+
+\begin{itembox}[l]{問題2-7-2}
+証明を完成させ。
+\begin{enumerate}
+\item $\forall C_1,\forall C_2,\forall C_3,\dots \in \mathcal{B}$,\\
+$C_n \rightarrow C$（i.e. $\forall i \in \mathbb{N}, C_i \supset C_{i+1}, \bigcap_{i \in \mathbb{N}}C_i = C$）and $\exists k \in \mathbb{N},\mu(C_k) < + \infty$ \\
+$\Rightarrow \mu(C_n) \rightarrow \mu(C)$
+\item $\forall E_1,\forall E_2,\forall E_3,\dots \in \mathcal{B}, \forall i \in \mathbb{N}, \mu(E_i) = 0 $\\
+$\Rightarrow \mu(\bigcup_{i \in \mathbb{N}} E_i)=0$
+\end{enumerate}
+
+\end{itembox}
+{\bf 解答：}
+\begin{enumerate}
+\item $\mu(C_n) < + \infty$なる$n$を固定し、$B_i := C_n \setminus C_{n+i}$とおく\\
+\[
+\forall i \in \mathbb{N},C_i \supset C_{i+1}  \Rightarrow (C_n \setminus C_{n+i}) \subset (C_n \setminus C_{n+i+1}) \Rightarrow B_i \subset B_{i+1}
+\]
+(a)の結果により、
+\[
+\mu(C_n \setminus C_{n+i}) \rightarrow \mu(\bigcup_{i \in \mathbb{N}}C_n \setminus C_{n+i})
+\]
+$C_n$は有限だから、$\mu(C_n \setminus C_{n+i}) = \mu(C_n) - \mu(C_{n+i})$である。また、$\bigcup_{i \in \mathbb{N}}C_n \setminus C_{n+i} = C_n \setminus \bigcap_{i \in \mathbb{N}}C_{n+i} $であるから、
+\[
+ \mu(C_n) - \mu(C_{n+i}) \rightarrow \mu(C_n \setminus \bigcap_{i \in \mathbb{N}}C_{n+i} )
+\]
+$C_n$は有限だから、$ \mu(C_n \setminus \bigcap_{i \in \mathbb{N}}C_{n+i}) =  \mu(C_n) - \mu( \bigcap_{i \in \mathbb{N}}C_{n+i} )$であるので、
+\[
+ \mu(C_n) - \mu(C_{n+i}) \rightarrow \mu(C_n) - \mu( \bigcap_{i \in \mathbb{N}}C_{n+i} )
+\]
+$\bigcap_{i \in \mathbb{N}}C_{i} = C$であるので、
+\[
+\mu(C_{n}) \rightarrow \mu(C)
+\]
+\item $F_{n} = \bigcup_{i=1}^{n} E_i$とおく、$\bigcup_{i=1}^{n} E_i \subset \bigcup_{i=1}^{n+1} E_i \Rightarrow F_n \subset F_{n+1}$、一方、有限加法性により、$\mu(F_n)=\sum_{i=1}^n \mu(E_i) =0$
+\[
+\mu(F_n) \rightarrow \mu(\bigcup_{i \in \mathbb{N}}F_i) = 0
+\]
+また、$\bigcup_{i \in \mathbb{N}}F_i = \bigcup_{k \in \mathbb{N}}(\bigcup_{i=1}^k E_i) = \bigcup_{i \in \mathbb{N}} E_i$であるので、
+\[
+ \mu(\bigcup_{i \in \mathbb{N}}F_i) =  \mu(\bigcup_{i \in \mathbb{N}} E_i) = 0
+\]
+
+\end{enumerate}
+
+
+\end{document}

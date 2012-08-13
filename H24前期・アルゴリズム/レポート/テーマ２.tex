@@ -1,0 +1,143 @@
+\documentclass[a4paper,11pt]{jsarticle}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{amssymb}
+\usepackage{ascmac}
+\usepackage{subfigure}
+\usepackage{bm}
+\usepackage{setspace}
+\usepackage{cases}%左かっこつけるときに必要だった
+\usepackage{leftidx}%行列表示用？
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{url}
+\usepackage{bm}
+\usepackage{verbatim}
+\usepackage{calc}
+
+\setlength{\headsep}{5mm}
+\setlength{\oddsidemargin}{-0.5zw} %→にズラす
+\setlength{\textheight}{37\baselineskip}
+\addtolength{\textheight}{\topskip}
+\setlength{\topmargin}{-10mm}
+\setlength{\textwidth}{45zw} %文章の幅
+\setlength{\textheight}{215mm}
+\setlength{\parindent}{1zw}%箇条書きの一文字下げ
+\pagestyle{fancy}
+
+\newtheorem{theorem}{定理}
+\newtheorem{prop}[theorem]{命題}
+\newtheorem{lemma}[theorem]{補題}
+\newtheorem{cor}[theorem]{系}
+\newtheorem{example}[theorem]{例}
+\newtheorem{definition}[theorem]{定義}
+\newtheorem{rem}[theorem]{注意}
+\newtheorem{guide}[theorem]{参考}
+\renewcommand{\proofname}{証明}
+
+\numberwithin{theorem}{section}  % 定理番号を「定理2.3」のように印刷
+\numberwithin{equation}{section} % 式番号を「(3.5)」のように印刷
+\newcommand{\argmax}{\mathop{\rm arg~max\,}\limits}
+\newcommand{\argmin}{\mathop{\rm arg~min\,}\limits}
+\newcommand{\st}{\mathop{\rm subject~to\,}\limits}
+\newcommand{\sign}{\mathop{\rm sign\,}\limits}
+
+\newcommand{\dom}{\mathop{\mathrm{\bf dom}}\nolimits}
+\newcommand{\minimize}{\mathop{\mathrm{\rm minimize}}\limits}
+\newcommand{\maximize}{\mathop{\mathrm{\rm maximize}}\limits}
+
+\lhead{2012年度計算数理応用ーアルゴリズム・テーマ２レポート}
+\chead{}
+\rhead{12M42340}
+\lfoot{チョウ　シホウ}
+\cfoot{\thepage}
+\rfoot{6月11日}
+\renewcommand{\footrulewidth}{0.4pt}
+\title{2012年度計算数理応用ーアルゴリズム・テーマ２レポート}
+\author{12M42340　チョウ　シホウ}
+\date{6月11日}
+
+\begin{document}
+\pagenumbering{roman}
+%\tableofcontents
+%\cleardoublepage
+\pagenumbering{arabic}
+\renewcommand{\thepart}{\arabic{part}}
+
+%\thispagestyle{empty}
+\begin{itembox}[l]{テーマ２・問３}
+今回はBisection問題に対応する特殊な形の連立方程式（とその確率モデル）について説明したが，メッセージ伝播法は，もっと自然な次のような連立方程式の生成モデルでも平均に有効に動くことが知られている．\\
+どのような確率パラメータ$p,q$だとうまく動くかを実験し，その結果・解析・考察を述べよ．
+\end{itembox}
+
+今回はサンプルプログラムの{\bf sample2mpass}と{\bf sample2gwalk}を比較した．
+ひとまずは性能の比較，
+$n$を$\{100,110,120,130,140,150,160,160,170,180,190,200\}$に繰り返し設定し，$p$を$\{\frac{2}{n},\frac{10}{n}\}$，$q$を$\{0.0,0.1,0.3\}$とおく，実験結果は下記である．
+\begin{itemize}
+\item
+Compiler:gcc version 4.2.1 (Based on Apple Inc. build 5658) (LLVM build 2336.9.00)
+\item
+CPU:1.7GHz Inter Core i5
+\item
+Memory:4GB 1333 MHz DDR3
+
+\end{itemize}
+\begin{table}[htdp]
+\caption{sample2gwalk}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+$(p,q)$  & $(\frac{2}{n},0.0)$ & $(\frac{2}{n},0.1)$ & $(\frac{2}{n},0.3)$ & $(\frac{10}{n},0.0)$ & $(\frac{10}{n},0.1)$ & $(\frac{10}{n},0.3)$ \\
+\hline
+time & $0.02$ & $0.02$ & $0.02$ & $0.02$ & $0.02$ & $0.02$\\
+\hline
+$t$ & $5210$ & $5977$ & $6337$ & $2187$ & $4306$ & $6555$\\
+\hline
+\end{tabular}
+\end{center}
+\label{default}
+\end{table}
+\begin{table}[htdp]
+\caption{sample2mpass}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+$(p,q)$  & $(\frac{2}{n},0.0)$ & $(\frac{2}{n},0.1)$ & $(\frac{2}{n},0.3)$ & $(\frac{10}{n},0.0)$ & $(\frac{10}{n},0.1)$ & $(\frac{10}{n},0.3)$ \\
+\hline
+time & $0.10$ & $0.11$ & $0.11$ & $0.03$ & $0.06$ & $0.35$\\
+\hline
+$t$ & $10925$ & $10925$ & $10925$ & $161$ & $684$ & $10925$\\
+\hline
+\end{tabular}
+\end{center}
+\label{default}
+\end{table}
+ここの$t$は各$p,q$の組み合せの総反復数，timeはコマンド{\bf time}を用いて測った計算時間である．全体的に，greedy random walkのほうが反復が少なく，計算が早い．しかし，greedy random walkの計算時間と反復数は$p,q$と大きい差がないが，message passingのは$p,q$と強い相関性が見られる：$q$が小さければ小さいほど，反復が少ない，計算も早い．次は，$n$と反復数の関係を見つけるため，$p=\frac{10}{n},q=0.0$に定め，$n$ごとの反復数を計算する．
+\begin{table}[htdp]
+\caption{$n$と反復数の関係}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+\hline
+$n$ & $110$& $120$& $130$& $140$& $150$& $160$& $170$& $180$& $190$& $200$\\
+\hline
+信念伝播法 $t$ & $15$& $15$& $15$& $15$& $15$& $16$& $17$& $16$& $17$& $23$\\
+\hline
+Random walk $t$ & $215$& $166$& $379$& $463$& $633$& $678$& $607$& $641$& $858$& $903$\\
+\hline
+\end{tabular}
+\end{center}
+\label{default}
+\end{table}
+上記のように，message passingの$t$は，$n$が増やしてもあんまり多くにならないが，random walkの$t$は$n$とともに増やしやすく，大規模の問題に適用できないと思う．\\
+一方，メモリー消費を考えると，Random walkのソースはMessage Passingのより一個の$O(n^2)$領域複雑度の配列が多いので，大きい$n$に対し，Message Passingのほうが効率がよいと見られる．
+
+
+
+
+
+
+
+\end{document}

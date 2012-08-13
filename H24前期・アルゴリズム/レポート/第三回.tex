@@ -1,0 +1,139 @@
+\documentclass[a4paper,11pt]{jsarticle}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{amssymb}
+\usepackage{ascmac}
+\usepackage{subfigure}
+\usepackage{bm}
+\usepackage{setspace}
+\usepackage{cases}%左かっこつけるときに必要だった
+\usepackage{leftidx}%行列表示用？
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{url}
+\usepackage{bm}
+\usepackage{verbatim}
+\usepackage{calc} 
+
+\setlength{\headsep}{5mm}
+\setlength{\oddsidemargin}{-0.5zw} %→にズラす
+\setlength{\textheight}{37\baselineskip}
+\addtolength{\textheight}{\topskip}
+\setlength{\topmargin}{-10mm}
+\setlength{\textwidth}{45zw} %文章の幅
+\setlength{\textheight}{215mm}
+\setlength{\parindent}{1zw}%箇条書きの一文字下げ
+\pagestyle{fancy}
+
+\newtheorem{theorem}{定理}
+\newtheorem{prop}[theorem]{命題}
+\newtheorem{lemma}[theorem]{補題}
+\newtheorem{cor}[theorem]{系}
+\newtheorem{example}[theorem]{例}
+\newtheorem{definition}[theorem]{定義}
+\newtheorem{rem}[theorem]{注意}
+\newtheorem{guide}[theorem]{参考}
+\renewcommand{\proofname}{証明}
+
+\numberwithin{theorem}{section}  % 定理番号を「定理2.3」のように印刷
+\numberwithin{equation}{section} % 式番号を「(3.5)」のように印刷
+\newcommand{\argmax}{\mathop{\rm arg~max\,}\limits}
+\newcommand{\argmin}{\mathop{\rm arg~min\,}\limits}
+\newcommand{\st}{\mathop{\rm subject~to\,}\limits}
+\newcommand{\sign}{\mathop{\rm sign\,}\limits}
+
+\newcommand{\dom}{\mathop{\mathrm{\bf dom}}\nolimits}
+\newcommand{\minimize}{\mathop{\mathrm{\rm minimize}}\limits}
+\newcommand{\maximize}{\mathop{\mathrm{\rm maximize}}\limits}
+
+\lhead{2012年度計算数理応用ーアルゴリズム・第三回レポート}
+\chead{}
+\rhead{12M42340}
+\lfoot{チョウ　シホウ}
+\cfoot{\thepage}
+\rfoot{6月11日}
+\renewcommand{\footrulewidth}{0.4pt}
+\title{2012年度計算数理応用ーアルゴリズム・第三回レポート}
+\author{12M42340　チョウ　シホウ}
+\date{6月11日}
+
+\begin{document}
+\pagenumbering{roman}
+%\tableofcontents
+%\cleardoublepage
+\pagenumbering{arabic}
+\renewcommand{\thepart}{\arabic{part}}
+
+%\thispagestyle{empty}
+\begin{itembox}[l]{テーマ２・問１}
+次の定理を証明せよ．
+
+与えられた$n$に対して，一様ランダムに$(3,4)$-疎行列$H$を生成することを仮定する．また（あらかじめ決められている）パラメータ$p<<1$に対して，ノイズベクトル$\bm{n}_*\in\{0,1\}^n$を各ビットごと独立に確率$p$で$1$に，$1-p$で$0$となるように生成する．こうしたランダムモデルのもとで
+\[
+P_{H,\bm{n}_*}[\bm{n}_*\text{が}\bm{c}=G(\bm{n}_*,H)\text{のただ一つの最尤解である}]
+\]
+という確率が$n$を大きくしたときに$0$に収束する．
+\end{itembox}
+\begin{proof}
+
+この定理を証明するため，幾つの準備sが必要である．
+\begin{enumerate}
+\item {\bf ランダムな$H$の構成}\\
+確率的に証明するため，次のようにランダムな$H$を構成する：$H$のすべての要素を$0$にし，列ごとにランダムに$t$個の要素をスリップ（$1 \to 0, 0\to 1$）する．ここで，$t$は密度パラメータである．
+\item {\bf ノイズベクトルの確率$P(\bm{n})$}\\
+あるノイズベクトル$\bm{n}$に対する確率は
+\[
+P(\bm{n}) := \prod_i^n (P(\bm{n}^{(i)}))
+\]
+この問題では，$P(\bm{n}^{(i)}=1)=p$，$P(\bm{n}^{(i)}=0)=1-p$ので，
+\[
+P(\bm{n}) := \prod_{\bm{n}^{(i)}=1} p \times \prod_{\bm{n}^{(i)}=0} 1-p
+\]
+\item {\bf 平均エントロピー(mean entropy)}\\
+ノイズベクトル$\bm{n}$の平均エントロピーは
+\[
+H_{\bm{n}} := - \sum_{i}^n P(\bm{n}^{(i)}) \log_2 P(\bm{n}^{(i)}) = p\log_2(\frac{1}{p}) + (1-p)\log_2(\frac{1}{1-p})
+\]
+\item {\bf Typical set}\\
+Typical setを次のように定める
+\[
+T = T_{n,\eta} = \Bigr\{ \bm{n} \in \{0,1\}^n : \Bigr|\frac{1}{n}\log_2\frac{1}{P(\bm{n})}-H_{\bm{n}}\Bigr| \le \eta \Bigr\}
+\]
+ただし，$\eta$はある小さい定数．$\sum_{\bm{n}\in T} P(\bm{n}) \le 1$ので，typical setの要素の数は
+\[
+|T| \le 2^{n(H_{\bm{n}}+\eta)}
+\]
+を満たす．
+\end{enumerate}
+
+大数の法則より，$n\to\infty,\bm{n}\in \{\bm{n}|\bm{n}\notin T \}=\emptyset$ので，$\bm{n}\in \{\bm{n}|\bm{n}\notin T \}$だけを考えばよい．
+
+また，
+\[
+\delta(\text{論理式})=\begin{cases}
+1& \text{論理式はtrue};\\
+0& \text{論理式はfalse}
+\end{cases}
+\]
+となる$\delta(\cdot)$を定義すると，
+\[
+P^*(H) = P_{H,\bm{n}_*}[\bm{n}_*\text{が}\bm{c}=G(\bm{n}_*,H)\text{のただ一つの最尤解である}]
+\]
+の確率の上界は次である．
+\[
+P^*(H) \le \sum_{\bm{n}\in T} P(\bm{n}) \sum_{\substack{\bm{n}'\in T,\\ \bm{n}' \neq \bm{n}}} \delta[H(\bm{n} - \bm{n}') \neq 0]
+\]
+また，$H$はランダムで構造されるので，$H$の平均をとると，
+\[
+\bar{P}^* \le \sum_{\substack{\bm{n}, \bm{n}'\in T, \\\bm{n}\neq \bm{n}'}} P(\bm{n}) \Bigr\{ \sum_{H} P(H) \delta[H(\bm{n} - \bm{n}') \neq 0] \Bigr\}
+\]
+\[
+\
+\]
+
+\end{proof}
+
+\end{document}

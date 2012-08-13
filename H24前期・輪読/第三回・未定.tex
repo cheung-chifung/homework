@@ -1,0 +1,208 @@
+\documentclass[a4paper,11pt]{jsarticle}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{amssymb}
+\usepackage{ascmac}
+\usepackage{subfigure}
+\usepackage{bm}
+\usepackage{setspace}
+\usepackage{cases}%左かっこつけるときに必要だった
+\usepackage{leftidx}%行列表示用？
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{url}
+\usepackage{bm}
+\usepackage{verbatim}
+\usepackage{calc} 
+
+\setlength{\headsep}{5mm}
+\setlength{\oddsidemargin}{-0.5zw} %→にズラす
+\setlength{\textheight}{37\baselineskip}
+\addtolength{\textheight}{\topskip}
+\setlength{\topmargin}{-10mm}
+\setlength{\textwidth}{45zw} %文章の幅
+\setlength{\textheight}{215mm}
+\setlength{\parindent}{1zw}%箇条書きの一文字下げ
+\pagestyle{fancy}
+
+\newtheorem{theorem}{定理}
+\newtheorem{prop}[theorem]{命題}
+\newtheorem{lemma}[theorem]{補題}
+\newtheorem{cor}[theorem]{系}
+\newtheorem{example}[theorem]{例}
+\newtheorem{definition}[theorem]{定義}
+\newtheorem{rem}[theorem]{注意}
+\newtheorem{guide}[theorem]{参考}
+\renewcommand{\proofname}{証明}
+
+\numberwithin{theorem}{section}  % 定理番号を「定理2.3」のように印刷
+\numberwithin{equation}{section} % 式番号を「(3.5)」のように印刷
+\newcommand{\argmax}{\mathop{\rm arg~max\,}\limits}
+\newcommand{\argmin}{\mathop{\rm arg~min\,}\limits}
+\newcommand{\st}{\mathop{\rm subject~to\,}\limits}
+\newcommand{\sign}{\mathop{\rm sign\,}\limits}
+
+\newcommand{\dom}{\mathop{\mathrm{\bf dom}}\nolimits}
+\newcommand{\minimize}{\mathop{\mathrm{\rm minimize}}\limits}
+\newcommand{\maximize}{\mathop{\mathrm{\rm maximize}}\limits}
+
+\newcommand{\prox}{\mathop{\mathrm{\rm Prox}}\limits}
+
+\lhead{ノルムのFenchel双対と汎用解法}
+\chead{}
+\rhead{輪読}
+\lfoot{チョウ　シホウ}
+\cfoot{\thepage}
+\rfoot{6月25日}
+\renewcommand{\footrulewidth}{0.4pt}
+\title{ノルムのFenchel双対と汎用解法}
+\author{12M42340　チョウ　シホウ}
+\date{6月25日}
+
+\begin{document}
+\pagenumbering{roman}
+%\tableofcontents
+%\cleardoublepage
+\pagenumbering{arabic}
+\renewcommand{\thepart}{\arabic{part}}
+
+%\thispagestyle{empty}
+\section{前回に引き続き}
+\subsection{正則化付き最適化問題の最適性条件（再掲）}
+\begin{equation}
+\minimize_{\bm{w} \in \mathbb{R}^p}\,\,\, f(\bm{w}) + \lambda \Omega(\bm{w}) \label{PP}
+\end{equation}
+に対し，あるベクトル$\bm{w} \in \mathbb{R}^p$が最適解となる必要十分条件は以下の式を満たす$-\frac{1}{\lambda} \nabla f(\bm{w}) \in \partial \Omega(\bm{w})$である．
+\begin{equation}
+\partial \Omega(\bm{w}) = \begin{cases}
+\{ \bm{z} \in \mathbb{R}^p \,\,\,|\,\,\, \Omega^*(\bm{z}) \le 1 \} & \text{\,\,\,if\,\,\,} \bm{w} = 0 \\
+\{ \bm{z} \in \mathbb{R}^p \,\,\,|\,\,\, \Omega^*(\bm{z}) = 1 \text{\,\,\,\,and\,\,\,\,} \bm{z}^\intercal \bm{w} = \Omega(\bm{w}) \}  & \text{\,\,\,otherwise.}
+\end{cases}
+\label{OptCond}
+\end{equation}
+
+次のFenchel-Young Inequalityを用いて式（\ref{OptCond}）を証明できる．
+\begin{itembox}[l]{Fenchel-Young Inequality}
+\begin{theorem}
+$\bm{w} \in \mathbb{R}^p,f \in \mathbb{R}^p,\bm{z} \in \dom f^* \neq \emptyset$とおくと，次の不等式
+\[
+f(\bm{w}) + f^*(\bm{z}) \ge \bm{w}^\intercal \bm{z}
+\]が成り立ち，また，$\bm{z} \in \partial f(\bm{w})$の時等号が成立．
+\end{theorem}
+\end{itembox}
+証明は板書で．
+
+\subsection{ノルムに対してのFenchel共役の双対性}
+前回引き続いて，次の不等式の双対性を示す．
+\begin{equation}
+\max_{\bm{z} \in \mathbb{R}^p,\Omega^*(\bm{z}) \le \lambda} -f^*(\bm{z}) \le \min_{\bm{w}\in \mathbb{R}^p} f(\bm{w}) + \lambda \Omega(\bm{w})
+\end{equation}
+関数$f$の定義域が空でないとき等号が成り立つ．\\
+弱双対性はFenchel-Young Inequalityより証明され，強双対性は本\cite{borwein}の定理3.3.5を参照．板書．
+
+\subsection{双対性を用いて問題（\ref{PP}）を解く}
+$z(\bm{w}^*) = \nabla f(\bm{w}^*)$は双対問題の唯一の解である．一般的には，$\bm{z}=\min(1,\frac{1}{\Omega^*(\nabla f (\bm{w}))})\nabla f(\bm{w})$のとうな$\bm{z}$を取り，各反復で$\bm{z}(\bm{w}^*)$を最適解して双対ギャップをゼロにする．
+
+
+\subsection{Design Matrixを用いた定式化}
+関数$f$を関数$\psi:\mathbb{R}^n \to \mathbb{R}$，Design Matrix $\bm{X}$を用いて$f(\bm{w}) = \phi(\bm{Xw})$と変換する．
+\begin{eqnarray}
+\min_{\bm{w} \in \mathbb{R}^p,\bm{u} \in \mathbb{R}^n} &\,\,\,\,& \phi(\bm{u}) + \lambda \Omega(\bm{w}) \\
+\st &\,\,\,\,& \bm{u} = \bm{X}\bm{w}
+\end{eqnarray}
+
+また，この問題をラグランジュ乗数$\bm{\alpha}^\intercal  \in \mathbb{R}^n$を用いてラグランジュ双対問題に変換すると
+\begin{eqnarray}
+\min_{\bm{w}\in\mathbb{R}^p,\bm{u} \in \mathbb{R}^n} \,\,\, \max_{\bm{\alpha}^\intercal  \in \mathbb{R}^n} && \phi(\bm{u}) + \lambda \Omega(\bm{w}) + \lambda \bm{\alpha}^\intercal  (\bm{X}\bm{w}-\bm{u}) \\
+\min_{\bm{w}\in\mathbb{R}^p,\bm{u} \in \mathbb{R}^n} \,\,\, \max_{\bm{\alpha}^\intercal  \in \mathbb{R}^n} && (\phi(\bm{u}) - \lambda\bm{\alpha}^\intercal \bm{u}) + \lambda (\Omega(\bm{w}) +   \lambda\bm{\alpha}^\intercal \bm{X}\bm{w})
+\end{eqnarray}
+そして，Fenchel双対問題は
+\begin{eqnarray}
+\max_{\bm{\alpha} \in \mathbb{R}^n} -\phi^*(\lambda \bm{\alpha}) \text{\,\,\,\,such that\,\,\,\,} \Omega^*(\bm{X}^\intercal  \bm{\alpha}) \le \lambda
+\end{eqnarray}
+
+\section{汎用メソッド}
+
+\begin{equation}
+\minimize_{\bm{w} \in \mathbb{R}^p}\,\,\,\, f(\bm{w}) + \lambda \Omega(\bm{w})
+\label{eq2.1}
+\end{equation}
+損失関数$f$と正則化項$\Omega$が同時に凸である場合だけ式（\ref{eq2.1}）は凸である．
+
+\subsection{劣勾配法}
+もし問題の劣勾配を効率よく算出できれば，すべての制約なし凸問題が劣勾配法で解ける．式（\ref{eq2.1}）に対して，損失関数$f$と正則化項$\Omega$の劣勾配が計算できれば劣勾配法で解ける．
+
+その反復アルゴリズムは：
+
+\begin{equation}
+\bm{w}_{t+1} = \bm{w}_t - \frac{\alpha}{t}(\bm{s} + \lambda\bm{s}'), \,\,\, \text{ where } \bm{s} \in \partial f(\bm{w}_t), \bm{s}' \in \partial \Omega (\bm{w}_t) 
+\end{equation}
+
+本\cite{iloco}より，この反復アルゴリズムが大域的収束，収束率は$F(\bm{w}_t) - \min_{\bm{w}\in \mathbb{R}^p} F(\bm{w}) = O(\frac{1}{\sqrt{t}})$，だが，実際に劣勾配法の収束スピードが遅いにもかかわらず，スパース解を求めるのも難しい．
+
+\subsection{LP,QP,SOCP,SDP問題に定着}
+この一章すべての正則化付き最適化問題（正則化付き最小二乗問題）はSDP問題またはQPなどSDPより簡単な問題に定着できる．
+
+例えば，次の問題
+\begin{equation}
+\min_{\bm{w} \in \mathbb{R}^p} \frac{1}{2n}\| \bm{y} - \bm{X}\bm{w} \|_2^2 + \lambda \Omega(\bm{w})
+\end{equation}
+の実数制約を非負制約に変形すると，次のQP問題に定着できる
+\begin{equation}
+\min_{\bm{w}_+,\bm{w}_- \in \mathbb{R}^p} \frac{1}{2n}\| \bm{y} - \bm{X}\bm{w}_+ + \bm{X}\bm{w}_-  \|_2^2 + \lambda \Omega(1^\intercal \bm{w}_+ + 1^\intercal \bm{w}_-)
+\end{equation}
+汎用ツールを使用すれば高精度解（小さい双対ギャップ）を求められるが，機械学習にとっては効率悪くて贅沢すぎる．なぜなら，
+\begin{enumerate}
+\item これらのツールが問題の特徴を無視しスピードが遅い，メモリー不足で落ちる可能性もある．
+\item Bottou and Bousquet(2007)より，機械学習に対して高精度の解がいらない． 
+\end{enumerate}
+
+\begin{comment}
+\section{近接法(Proximal Methods)}
+
+前回もこのアルゴリズムを簡単に説明したが，今回はより早いバージョンを紹介する．5/28の第四節Shrinking/Thresholding for Regularized Optimizationを参照してください．
+
+\subsection{原理}
+近接法は式（\ref{eq2.1}）のような問題（リプシッツ連続の微分可能関数$f$と微分不可能の$\lambda \Omega$の和）を解くの専用アルゴリズムであり，その収束率と大規模非スムーズに対する性能に焦点が当てられている．
+
+近接法は次の式に定義される．
+
+\begin{equation}
+\min_{\bm{w} \in \mathbb{R}^p} f(\bm{w}^\intercal ) + \nabla f(\bm{w}^\intercal )^\intercal (\bm{w}-\bm{w}^\intercal ) + \lambda \Omega(\bm{w}) + \frac{L}{2}\|\bm{w} - \bm{w}^\intercal \|_2^2 \label{PROX_P}
+\end{equation}
+
+ただし，二次項$\frac{L}{2}\|\bm{w} - \bm{w}^\intercal \|_2^2$は近接項（proximal term）という．$L>0$は$f$のリプシッツ定数であり，$\nabla f$の上界を制約する．式（\ref{PROX_P}）は前回レジメの$\alpha = \frac{1}{L}$バージョン．
+
+近接法のアプローチは，反復ごとに$f$を現在点に線形近接し，近接項を利用して$\bm{w}^\intercal $の近傍を更新する．
+\begin{equation}
+\min_{\bm{w} \in \mathbb{R}^p} \frac{1}{2}\| \bm{w} - \bigr(\bm{w}^\intercal  - \frac{1}{L}\nabla f(\bm{w}^\intercal )\bigr) \|_2^2 + \frac{\lambda}{L} \Omega(\bm{w});
+\end{equation}
+次の式に書き直す
+\begin{equation}
+\min_{\bm{w}\in\mathbb{R}^p} \frac{1}{2}\| \bm{u} - \bm{w} \|^2 + \mu \Omega(\bm{w}); \label{PROX_N}
+\end{equation}
+
+非スムーズ正則化項$\Omega$がなければ，式（\ref{PROX_N}）は次の劣勾配法とは同じである．
+\[ \bm{w}^{t+1} \Rightarrow \bm{w}^\intercal  - \frac{1}{L} \]
+
+\begin{equation}
+\prox_{\frac{\lambda}{L} \Omega} \Bigr( \bm{w}^\intercal  - \frac{1}{L}\nabla f(\bm{w}^\intercal ) \Bigr)
+\end{equation}
+
+\begin{equation}
+f(\bm{w}^*) \le M_f^L(\bm{w}^\intercal , \bm{w}_L^*) := f(\bm{w}^\intercal ) + \nabla f(\bm{w}^\intercal )^\intercal (\bm{w}_L^*-\bm{w}^\intercal ) + \frac{L}{2}\| \bm{w}_L^* - \bm{w}^2 \|_2^2
+\end{equation}
+\end{comment}
+
+\begin{thebibliography}{99}
+\bibitem{bach} Francis Bach, Rodolphe Jenatton, EJulien Mairal and Guillaume Obozinski (2012) "Optimization with Sparsity-Inducing Penalties", 
+Foundations and Trends in Machine Learning: Vol. 4: No 1, pp 1-106. 
+\bibitem{fukushima} 福島雅夫, 非線形最適化の基礎, 朝倉書店, 2001
+\bibitem{borwein}  Borwein, Jonathan; Lewis, Adrian (2006). Convex Analysis and Nonlinear Optimization: Theory and Examples (2 ed.). Springer. ISBN 978-0-387-29570-1.
+\bibitem{iloco} Y. Nesterov, Introductory Lectures on Convex Optimization: A Basic Course (Applied Optimization), 1st ed.    Springer Netherlands.
+\bibitem{nips-t} Steve Wright, NIPS Tutorial, 6 December 2010,\,\,\url{ http://pages.cs.wisc.edu/~swright/nips2010/sjw-nips10.pdf}
+\end{thebibliography}
+\end{document}

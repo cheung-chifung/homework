@@ -1,0 +1,311 @@
+\documentclass[a4paper,11pt]{jsarticle}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{amssymb}
+\usepackage{ascmac}
+\usepackage{subfigure}
+\usepackage{bm}
+\usepackage{setspace}
+\usepackage{cases}%左かっこつけるときに必要だった
+\usepackage{leftidx}%行列表示用？
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{url}
+\usepackage{bm}
+\usepackage{verbatim}
+\usepackage{calc} 
+
+\setlength{\headsep}{5mm}
+\setlength{\oddsidemargin}{-0.5zw} %→にズラす
+\setlength{\textheight}{37\baselineskip}
+\addtolength{\textheight}{\topskip}
+\setlength{\topmargin}{-10mm}
+\setlength{\textwidth}{45zw} %文章の幅
+\setlength{\textheight}{215mm}
+\setlength{\parindent}{1zw}%箇条書きの一文字下げ
+\pagestyle{fancy}
+
+\newtheorem{theorem}{定理}
+\newtheorem{prop}[theorem]{命題}
+\newtheorem{lemma}[theorem]{補題}
+\newtheorem{cor}[theorem]{系}
+\newtheorem{example}[theorem]{例}
+\newtheorem{definition}[theorem]{定義}
+\newtheorem{rem}[theorem]{注意}
+\newtheorem{guide}[theorem]{参考}
+\renewcommand{\proofname}{証明}
+
+\numberwithin{theorem}{section}  % 定理番号を「定理2.3」のように印刷
+\numberwithin{equation}{section} % 式番号を「(3.5)」のように印刷
+\newcommand{\argmax}{\mathop{\rm arg~max\,}\limits}
+\newcommand{\argmin}{\mathop{\rm arg~min\,}\limits}
+\newcommand{\st}{\mathop{\rm subject~to\,}\limits}
+\newcommand{\sign}{\mathop{\rm sign\,}\limits}
+
+\newcommand{\dom}{\mathop{\mathrm{\bf dom}}\nolimits}
+\newcommand{\diag}{\mathop{\mathrm{\bf diag}}\nolimits}
+\newcommand{\minimize}{\mathop{\mathrm{\rm minimize}}\limits}
+\newcommand{\maximize}{\mathop{\mathrm{\rm maximize}}\limits}
+
+
+\lhead{2012年度数理計画特論・第三回レポート}
+\chead{}
+\rhead{12M42340}
+\lfoot{チョウ　シホウ}
+\cfoot{\thepage}
+\rfoot{6月11日}
+\renewcommand{\footrulewidth}{0.4pt}
+\title{2012年度数理計画特論・第三回レポート}
+\author{12M42340　チョウ　シホウ}
+\date{6月11日}
+
+\begin{document}
+\pagenumbering{roman}
+%\tableofcontents
+%\cleardoublepage
+\pagenumbering{arabic}
+\renewcommand{\thepart}{\arabic{part}}
+
+%\thispagestyle{empty}
+線形計画問題
+\begin{eqnarray*}
+\minimize \,\,\,&& -4x_1 -4x_2 -x_3\\
+\st \,\,\,&& 2x_1 + x_2 + x_3 +x_4 =7\\
+&& x_1 +2x_2 +x_3 +x_5 = 6\\
+&&x_1 \ge 0, x_2 \ge 0, x_3 \ge 0, x_4 \ge 0, x_5 \ge 0
+\end{eqnarray*}
+について，次の問いに答え．
+\begin{itembox}[l]{問１}
+初期点$x=(x_1,x_2,x_3,x_4,x_5)=(2,1,1,1,1)$からアフィンスケーリング法を適用したときの探索方向（アフィンスケーリング方向）$\Delta x$を求めよ（$a=\|X_kz^k\|$を使ってよい）
+\end{itembox}
+問題を標準化
+\[
+A=\begin{pmatrix}
+2 &1 &1 &1 &0 \\
+1 &2 &1 &0 &1
+\end{pmatrix}
+\,\,\,
+b = \begin{pmatrix}
+7\\6
+\end{pmatrix}
+\,\,\,
+c = \begin{pmatrix}
+-4 \\ -4 \\ -1 \\ 0 \\ 0
+\end{pmatrix}
+\]
+各反復の最適な$\Delta x^*$は
+\[
+\Delta x^* = -\frac{ X_k^2z^k}{\| X_kz^k \|}
+\]
+ただし，$y^k=(AX_k^2A^T)^{-1}AX_k^2c,\,\,z^k=c-A^Ty^k,\,\,X_k=\diag(x_k)$
+
+初期点を代入すると，
+\[
+y^k=\begin{pmatrix}
+-\frac{95}{69}&
+-\frac{68}{69}
+\end{pmatrix}^T
+\,\,\,\,\,\,
+z^k=\begin{pmatrix}
+-\frac{6}{23},
+-\frac{15}{23},
+\frac{94}{69},
+\frac{95}{69},
+\frac{68}{69}
+\end{pmatrix}^T
+\]
+\[
+X_k^2z^k = \begin{pmatrix}
+-\frac{24}{23},
+-\frac{15}{23},
+\frac{94}{69},
+\frac{95}{69},
+\frac{68}{69}
+\end{pmatrix}^T
+\]
+$a=\|X_kz^k\|$とおくと，次のアフィンスケーリング方向は
+\[
+\Delta x^* = -\frac{ X_k^2z^k}{\| X_kz^k \|} = -\frac{1}{a}\begin{pmatrix}
+-\frac{24}{23},
+-\frac{15}{23},
+\frac{94}{69},
+\frac{95}{69},
+\frac{68}{69}
+\end{pmatrix}^T
+\]
+\begin{itembox}[l]{問２}
+ステップサイズを$\alpha$とした時に，次の点$x+\alpha \Delta x$が実行可能となるような$\alpha$の範囲を求める．また，その点での目的関数を$\alpha$の一次式として表せ．
+\end{itembox}
+次の点$x^{k+1} = x^k +\alpha \Delta x$を次の制約条件に代入する，
+\[
+x^{k+1} \in \Bigr\{ \,\,x\,\, \Bigr| \begin{cases}
+2x_1 + x_2 + x_3 +x_4 =7\\
+x_1 +2x_2 +x_3 +x_5 = 6\\
+x_1 \ge 0, x_2 \ge 0, x_3 \ge 0, x_4 \ge 0, x_5 \ge 0
+\end{cases} \Bigr\}
+\]
+また，
+\[
+x^{k+1} = x^k +\alpha \Delta x = (
+2 + \frac{\alpha}{a}\frac{24}{23},\,\,
+1 + \frac{\alpha}{a}\frac{15}{23},\,\,
+1 - \frac{\alpha}{a}\frac{94}{69},\,\,
+1 - \frac{\alpha}{a}\frac{95}{69},\,\,
+1 - \frac{\alpha}{a}\frac{68}{69}
+)
+\]
+代入すると，すべての$\alpha$に対して，等式制約は必ず満たされるので，ここでは非負制約だけを考える．
+\[
+\begin{cases}
+2 + \frac{\alpha}{a}\frac{24}{23} \ge 0,\\
+1 + \frac{\alpha}{a}\frac{15}{23} \ge 0,\\
+1 - \frac{\alpha}{a}\frac{94}{69} \ge 0,\\
+1 - \frac{\alpha}{a}\frac{95}{69} \ge 0,\\
+1 - \frac{\alpha}{a}\frac{68}{69} \ge 0
+\end{cases}
+\Rightarrow
+\begin{cases}
+\alpha \ge -\frac{23}{12}a\\
+\alpha \ge -\frac{23}{15}a\\
+\alpha \le \frac{69}{94}a\\
+\alpha \le \frac{69}{95}a\\
+\alpha \le \frac{69}{68}a 
+\end{cases}
+\]
+従って，$-\frac{23}{15}a \le \alpha \le \frac{69}{95}a$\\
+
+また，$x^{k+1} = x^k +\alpha \Delta x$を目的関数に代入すると，
+\[
+-4\times(2 + \frac{\alpha}{a}\frac{24}{23}) +
+-4\times(1 + \frac{\alpha}{a}\frac{15}{23}) +
+-(1 - \frac{\alpha}{a}\frac{94}{69}) = -13 - \frac{\alpha}{a} \frac{374}{69}
+\]
+
+\begin{itembox}[l]{問３}
+双対問題を求め，その初期点を$(y_1,y_2)=(-2,-2)$とし，スラック変数の値を実行可能となるように定め，問１の主問題の初期点を使うとき，主双対アフィンスケーリング法による探索方向を求めよ．
+\end{itembox}
+$y=(y_1,y_2), z=(z_1,z_2,z_3,z_4,z_5)$とおくと，双対問題は
+\begin{eqnarray*}
+\minimize \,\,\, && b^Ty\\
+\st \,\,\, && A^Ty+z = c\\
+&& z \ge 0
+\end{eqnarray*}
+代入すると，
+\begin{eqnarray*}
+\minimize \,\,\, && 7y_1 + 6y_2\\
+\st \,\,\, && \begin{pmatrix}
+2&1\\ 1&2\\ 1&1\\ 1&0\\ 0&1
+\end{pmatrix}\begin{pmatrix}-2\\-2\end{pmatrix} + \begin{pmatrix}
+z_1 \\ z_2 \\ z_3 \\ z_4 \\ z_5
+\end{pmatrix}  = \begin{pmatrix}
+-4\\-4\\-1\\0\\0
+\end{pmatrix}\\
+&& z_1 \ge 0, z_2 \ge 0, z_3 \ge 0, z_4 \ge 0, z_5 \ge 0
+\end{eqnarray*}
+上記の問題の線形相補条件より，$y=(-2,-2)$に対応する実行可能の$z$は
+\[
+z = (2, 2, 3, 2, 2)^T 
+\]
+資料より，主双対アフィンスケーリング法方向は次の線形方程式系の解である．$X_k=\diag(x_k),Z_k=\diag(z_k)$に定めると，
+\begin{eqnarray*}
+\Delta y&=& (AZ_k^{-1}X_kA^T)^{-1}b\\
+&=& \Biggr(
+\begin{pmatrix}
+2&1\\ 1&2\\ 1&1\\ 1&0\\ 0&1
+\end{pmatrix}
+\begin{pmatrix}
+\frac{1}{2} & 0 & 0 & 0 & 0\\
+0 & \frac{1}{2} & 0 & 0 & 0\\
+0 & 0 & \frac{1}{3} & 0 & 0\\
+0 & 0 & 0 & \frac{1}{2} & 0\\
+0 & 0 & 0 & 0 & \frac{1}{2}
+\end{pmatrix}
+\begin{pmatrix}
+2 & 0 & 0 & 0 & 0\\
+0 & 1 & 0 & 0 & 0\\
+0 & 0 & 1 & 0 & 0\\
+0 & 0 & 0 & 1 & 0\\
+0 & 0 & 0 & 0 & 1
+\end{pmatrix}
+\begin{pmatrix}
+2&1\\ 1&2\\ 1&1\\ 1&0\\ 0&1
+\end{pmatrix}^T
+\Biggr)^{-1} \begin{pmatrix}
+7\\6
+\end{pmatrix}\\
+&=& \begin{pmatrix}\frac{41}{56} & \frac{13}{14}\end{pmatrix}^T\\
+\Delta z&=& -A^T\Delta y\\
+&=& -
+\begin{pmatrix}
+2&1\\ 1&2\\ 1&1\\ 1&0\\ 0&1
+\end{pmatrix}^T
+\begin{pmatrix}
+\frac{41}{56}\\\frac{13}{14}
+\end{pmatrix}
+\\
+&=& \begin{pmatrix}
+-\frac{67}{28}&
+-\frac{145}{56}&
+-\frac{93}{56}&
+-\frac{41}{56}&
+-\frac{13}{14}
+\end{pmatrix}^T\\
+\Delta x&=& -Z_k^{-1}X_k\Delta z - x^k\\
+&=&
+-\begin{pmatrix}
+\frac{1}{2} & 0 & 0 & 0 & 0\\
+0 & \frac{1}{2} & 0 & 0 & 0\\
+0 & 0 & \frac{1}{3} & 0 & 0\\
+0 & 0 & 0 & \frac{1}{2} & 0\\
+0 & 0 & 0 & 0 & \frac{1}{2}
+\end{pmatrix}
+\begin{pmatrix}
+2 & 0 & 0 & 0 & 0\\
+0 & 1 & 0 & 0 & 0\\
+0 & 0 & 1 & 0 & 0\\
+0 & 0 & 0 & 1 & 0\\
+0 & 0 & 0 & 0 & 1
+\end{pmatrix}
+\begin{pmatrix}
+-\frac{67}{28}\\
+-\frac{145}{56}\\
+-\frac{93}{56}\\
+-\frac{41}{56}\\
+-\frac{13}{14}
+\end{pmatrix}
+-
+\begin{pmatrix}
+2\\1\\1\\1\\1
+\end{pmatrix}
+ \\
+&=& \begin{pmatrix}
+\frac{11}{28}&
+\frac{33}{112}&
+-\frac{25}{56}&
+-\frac{71}{112}&
+-\frac{15}{28}
+\end{pmatrix}^T\\ 
+\end{eqnarray*}
+
+
+
+
+\begin{itembox}[l]{問４}
+上記の結果等を参考として，主アフィンスケーリング法と主双対アフィンスケーリング法の類似点と相違点について考察せよ．
+\end{itembox}
+類似点：
+\begin{itemize}
+\item 両方法とも主問題の線形制約を満たす部分空間上である主問題の初期点から各反復で最適解に近寄るのヒューリスティクス法である．
+\end{itemize}
+相違点：
+\begin{itemize}
+\item 主双対アフィンスケーリング法は主問題だけではなく，双対問題の実行可能領域も用いた内点法であり，前もって双対問題とその実行可能な初期点を求めておくのは必要である．なお，各反復$\Delta x$だけではなく，双対問題のアフィンスケーリング方向$\Delta y,\Delta z$も求めらなければいけないので，反復ごとに主双対アフィンスケーリング法のほうが計算時間をかかると推定できる．
+\item 一般に主アフィンスケーリング法はステップサイズ$\alpha$を固定するに対して，主双対アフィンスケーリング法は各反復で$\alpha$を決めるのは必要である．
+\item 主双対アフィンスケーリング法は双対制約を守るので，すべての解は中心の辺りにあるが，主アフィンスケーリング法は主制約だけを守るため，必ずしも中心に沿っているとはいえない．
+\item $問１$と$問３$の解を目的関数に代入し，目的関数値はそれぞれ$-13-\alpha 2.3282 $と$-13-\alpha2.3056$ので，この問題に対して主アフィンスケーリング法のほうが収束が早いと考えられる．理論的には大規模な問題における主双対アフィンスケーリング法のほうが$X_kz_k$が$0$に収束早いと思うが．
+\end{itemize}
+
+\end{document}

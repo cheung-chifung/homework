@@ -1,0 +1,123 @@
+\documentclass[a4paper,11pt]{jsarticle}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{amssymb}
+\usepackage{ascmac}
+\usepackage{subfigure}
+\usepackage{bm}
+\usepackage{setspace}
+\usepackage{cases}%左かっこつけるときに必要だった
+\usepackage{leftidx}%行列表示用？
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{url}
+\usepackage{bm}
+\usepackage{verbatim}
+\usepackage{calc} 
+
+\setlength{\headsep}{5mm}
+\setlength{\oddsidemargin}{-0.5zw} %→にズラす
+\setlength{\textheight}{37\baselineskip}
+\addtolength{\textheight}{\topskip}
+\setlength{\topmargin}{-10mm}
+\setlength{\textwidth}{45zw} %文章の幅
+\setlength{\textheight}{215mm}
+\setlength{\parindent}{1zw}%箇条書きの一文字下げ
+\pagestyle{fancy}
+
+\newtheorem{theorem}{定理}
+\newtheorem{prop}[theorem]{命題}
+\newtheorem{lemma}[theorem]{補題}
+\newtheorem{cor}[theorem]{系}
+\newtheorem{example}[theorem]{例}
+\newtheorem{definition}[theorem]{定義}
+\newtheorem{rem}[theorem]{注意}
+\newtheorem{guide}[theorem]{参考}
+\renewcommand{\proofname}{証明}
+
+\numberwithin{theorem}{section}  % 定理番号を「定理2.3」のように印刷
+\numberwithin{equation}{section} % 式番号を「(3.5)」のように印刷
+\newcommand{\argmax}{\mathop{\rm arg~max\,}\limits}
+\newcommand{\argmin}{\mathop{\rm arg~min\,}\limits}
+\newcommand{\st}{\mathop{\rm subject~to\,}\limits}
+\newcommand{\sign}{\mathop{\rm sign\,}\limits}
+
+\newcommand{\dom}{\mathop{\mathrm{\bf dom}}\nolimits}
+\newcommand{\minimize}{\mathop{\mathrm{\rm minimize}}\limits}
+\newcommand{\maximize}{\mathop{\mathrm{\rm maximize}}\limits}
+
+\newcommand{\prox}{\mathop{\mathrm{\rm Prox}}\limits}
+
+\title{2012年度金融リスクマネジメント・第二回レポート}
+\author{12M42340　チョウ　シホウ}
+\date{}
+
+\begin{document}
+\pagenumbering{roman}
+%\tableofcontents
+%\cleardoublepage
+\pagenumbering{arabic}
+\renewcommand{\thepart}{\arabic{part}}
+
+\maketitle
+\begin{itembox}[l]{練習問題1}
+\begin{equation*}
+\text{市場モデル}\begin{cases}
+d P_t^0 = r P_t^0dt,P_{\mathbb{Q}}^0 = 1\\
+d P_t^1 = P_t^1(\theta dt + \sigma d W_t)
+\end{cases}
+\end{equation*}
+\[
+r \le 0, \theta \in \mathbb{F}, \sigma > 0, \theta > r, \{W_t\}1-\text{dim BM}
+\]
+におけるリスク最小化問題
+\[
+\min_{\xi \in \mathcal{A}(x)} \mathbb{E}[(K-X_T^{x,\pi})P] \,\,\, (0 < x < e^{-rt}K )
+\]
+\[
+\text{where} p \in (1,\infty)\,\,\,k>0:\text{定数}
+\]
+\end{itembox}
+{\bf 解答}\\
+
+問題文の設定によって，$\sigma(r,T) = \sigma$，最適化問題は
+\[
+\max_{\pi \in \mathcal{A} }\mathbb{E}[\log X_T^{x,\pi}] = \log x+\mathbb{E}\int_0^T \Bigr( r(s,Y_s) + \pi_s^*(b(s,Y_s)-r(s,Y_s)1) - \frac{1}{2}|\sigma(s,Y_s)^*\pi_s|^2 \Bigr)
+\]
+である，次の問題とは同値
+\[
+\max_{\pi} (-\frac{1}{2}\sigma^2\pi^2+(b-r)\pi)
+\]
+この問題を満たす投資比率過程の最適解候補は
+\[
+\hat{\pi}_t := \frac{b-r}{\sigma^2},\,\,\,\,\, 0\le t \le T
+\]
+である．また，条件
+\[
+\mathbb{E}\Bigr[ \int_0^T| (b(s,Y_s) -r(s, Y_s)1)^*\pi_s |ds + \int_0^T |\sigma(s,Y_s)^*\pi_s|^2 \Bigr] < \infty
+\]
+が\[
+\mathbb{E}\int_0^T \hat{\pi}_t^2 dt < \infty \Leftrightarrow
+\mathbb{E}\int_0^T \frac{(b-r)^2}{\sigma_t^4} dt < \infty \Leftrightarrow
+\mathbb{E}\Bigr[ \frac{(b-r)^2}{\sigma_t^4} \int_0^T 1 dt \Bigr] < \infty
+\]
+と同値であり．成り立つので，この最適投資問題の解は
+\[
+\hat{\pi}_t := \frac{b-r}{\sigma^2},\,\,\,\,\, 0\le t \le T, A \le \hat{\pi}_t \le B
+\]
+
+
+\begin{itembox}[l]{練習問題２}
+期待効用最大化問題の一般的解法を一つ挙げ，説明せよ（数学的証明は不要）
+\end{itembox}
+
+期待効用最大化問題における最も一般的な解法は動的計画法である．動的計画法が扱う問題は他のポートフォリオ最適化とほぼ同じく，一定なリスク（分散・半分散・VaR）に定め，ある評価基準（期待収益・期待効用）を最大化し，最適な投資比率を見つける問題である．しかし，他の解法との違うところは，動的計画法は一定な時刻における最適解を求めるではなく，各時刻$t$でポートフォリオ最適化を行い，ある時間帯における最適投資比率を求めること．
+
+動的計画法は，投資対象の価格過程（株価過程・債券価格過程）のモデルを構築し，その確率微分方程式を求め，余剰資金の預け入れや必要資金の借り入れを行えると仮定し，最適化問題を組み，最適解の候補を求める．問題ごとの設定を加え，十分多く含みかつ適切な可積分条件を満たすように，最後の解を決める．
+
+
+
+\end{document}

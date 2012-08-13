@@ -1,0 +1,80 @@
+\documentclass{jsarticle}
+\topmargin=-3.0cm \oddsidemargin=0.1cm \evensidemargin=0.1cm
+\textwidth=16 true cm \textheight=27 true cm
+\setlength{\textheight}{250mm}
+
+\usepackage{amsmath, amssymb}
+\usepackage{fancybox,ascmac}
+
+\begin{document}
+\title{2012年度金融工学・第一回レポート}
+\author{{\normalsize 社会理工学研究科　経営工学専攻　チョウ シホウ　学籍番号 12M42340}}
+\date{}
+\maketitle
+
+\def \Pr{{\rm Pr}}
+
+
+\baselineskip 0.6cm
+
+\begin{itembox}[l]{問題1-1-3}
+$[0,1]^2={(x,y)|(x,y) \in \mathbb{R}, 0 \le x, y \le 1 }$と書く、
+$card([0,1]^2) = \aleph_{1}を示せ。$
+\end{itembox}
+{\bf 解答：}
+$I=(0,1]$、$I$の元$a,b$を十進法によって、
+\[ a = 0.\bar{a}_{1}\bar{a}_{2}\bar{a}_{3}\dots \]
+\[ b = 0.\bar{b}_{1}\bar{b}_{2}\bar{b}_{3}\dots \]
+と無限小数に展開しておき、もう一つの元$c$を
+\[ c = 0.\bar{a}_{1}\bar{b}_{1}\bar{a}_{2}\bar{b}_{2}\bar{a}_{3}\bar{b}_{3}\dots \]
+$\bar{a}_{i},\bar{b}_{i}$は$a,b$から抜き出す数字である、$0$が出たら$0$でないものが出た直接まで延ばして切る。 \\
+逆に、$c$を交互に抜き出して、
+\[ c = 0.\bar{c}_{1}\bar{c}_{2}\bar{c}_{3}\bar{c}_{4}\bar{c}_{5}\bar{c}_{6}\dots \]
+を展開する。$a,b$を
+\[ a = 0.\bar{c}_{1}\bar{c}_{3}\bar{c}_{5}\dots \]
+\[ b = 0.\bar{c}_{2}\bar{c}_{4}\bar{c}_{6}\dots \]
+にする、両方それぞれ$0 \mapsto (0,0), (0,0) \mapsto 0$すると、$f:[0,1]\mapsto[0,1]\times[0,1]$と$f^{-1}:[0,1]\times[0,1]\mapsto[0,1]$両方の単射ができ、$f$は全単射である。
+Bernstein's theoremにより、明らかに
+\[ card([0,1]^2)=card([0,1])=\aleph_{1} \]
+
+\begin{itembox}[l]{問題1-2-1} 1. $(X,2^{X})$の上に定義されたすべての写像は連続。2. $(X,\{\emptyset,X\})$に値をとるすべての写像は連続。\end{itembox}
+{\bf 解答：}
+\begin{enumerate}
+\item
+離散位相空間の定義により、離散位相空間$X$の任意の部分集合は開集合である。そのため、すべての$X$からの写像$f:X\mapsto Y$に対して、$f$の任意の開集合の逆像$f_{-1}$は$X$の部分集合であるので、必ず開集合である。故に、すべての$f$は連続である。
+\item
+密着位相空間$X$への任意の写像を$f:Y\mapsto X$にする、 $X$の開集合は$\{\emptyset,X\}$のみである。空集合$\emptyset$の原像はもちろん空集合である。そして、$f^{-1}(X) = \{y \in Y | f(y) \in X \} = Y$、$Y$は$Y$の中の開集合ので、$X$のすべての開集合の逆像は開集合である。つまり、すべての$f$は連続である。
+\end{enumerate}
+
+\begin{itembox}[l]{問題1-2-2}
+$f: \mathbb{R} \mapsto \mathbb{R}$を考える、ここで$\mathbb{R}$は標準位相$O(\mathbb{R})$を入れて考える。不連続関数の例を一つ作り。その例が定義1-2-1の(*)を満たないことを示せ。
+\end{itembox}
+{\bf 解答：}
+例：下記の関数$f$は不連続である
+\[f(x)=
+\begin{cases}
+x & x<1 \\
+x+1 & x \ge 1
+\end{cases}
+\]
+この関数の開集合$(0,2)$の$f$の上の逆像は$(0,1)\cup[2,3)$である。明らかにこの集合は開集合ではないので、不連続である。
+
+\begin{itembox}[l]{定理1-2-2の証明}
+$(X,\mathfrak{I}),(X',\mathfrak{I}')$：位相空間、$f:X \mapsto X'$：写像。この時、次の３条件は同値。
+\begin{enumerate}
+\item $f$：連続。
+\item $\forall F' \subset X'$：閉集合に対し、$f^{-1}(F')$：閉集合である。
+\item $\forall x \in X,\forall V' \in \mathbb{V}(f(x))$に対し、$f^{-1}(V') \in \mathbb{V}(x)$である。
+\end{enumerate}
+\end{itembox}
+{\bf 解答：}
+\begin{enumerate}
+\item
+(1) $\Longleftrightarrow$ (2) \,\,\, $f$が連続なので、任意の$X'$の開集合$K$について、$f^{-1}(K)$は$X$の開集合になる。そして、$X'$の閉集合$F$に対して、$f^{-1}({F'}^c)=(f^{-1}(F'))^c$は$X$の閉集合なので、$f^{-1}(F')$は$X$の閉集合。逆も同じ。
+\item
+(2) $\Longrightarrow$ (3) \,\,\,(2)により、$f(x)$の近傍$\mathbb{V}(f(x))$は開集合であるから、$\mathbb{V}(x)$も開集合。$V'$の逆像$f^{-1}(V')$も開集合である。そして、$V' \in \mathbb{V}(f(x))$、$ｘ$の近傍$\mathbb{V}(x)$を適当にとれば、$f^{-1}(V') \in \mathbb{V}$である。逆も自明。
+\item
+(3) $\Longrightarrow$ (1) \,\,\, (1) $\Longleftrightarrow$ (2)、(2) $\Longrightarrow$ (3)ので、(1) $\Longleftrightarrow$ (3)も成り立つ。
+\end{enumerate}
+
+\end{document}

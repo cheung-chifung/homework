@@ -1,0 +1,133 @@
+\documentclass[a4paper,11pt]{jsarticle}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{amssymb}
+\usepackage{ascmac}
+\usepackage{subfigure}
+\usepackage{bm}
+\usepackage{setspace}
+\usepackage{cases}%左かっこつけるときに必要だった
+\usepackage{leftidx}%行列表示用？
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{url}
+\usepackage{bm}
+\usepackage{verbatim}
+\usepackage{calc} 
+
+\setlength{\headsep}{5mm}
+\setlength{\oddsidemargin}{-0.5zw} %→にズラす
+\setlength{\textheight}{37\baselineskip}
+\addtolength{\textheight}{\topskip}
+\setlength{\topmargin}{-10mm}
+\setlength{\textwidth}{45zw} %文章の幅
+\setlength{\textheight}{215mm}
+\setlength{\parindent}{1zw}%箇条書きの一文字下げ
+\pagestyle{fancy}
+
+\newtheorem{theorem}{定理}
+\newtheorem{prop}[theorem]{命題}
+\newtheorem{lemma}[theorem]{補題}
+\newtheorem{cor}[theorem]{系}
+\newtheorem{example}[theorem]{例}
+\newtheorem{definition}[theorem]{定義}
+\newtheorem{rem}[theorem]{注意}
+\newtheorem{guide}[theorem]{参考}
+\renewcommand{\proofname}{証明}
+
+\numberwithin{theorem}{section}  % 定理番号を「定理2.3」のように印刷
+\numberwithin{equation}{section} % 式番号を「(3.5)」のように印刷
+\newcommand{\argmax}{\mathop{\rm arg~max\,}\limits}
+\newcommand{\argmin}{\mathop{\rm arg~min\,}\limits}
+\newcommand{\st}{\mathop{\rm subject~to\,}\limits}
+\newcommand{\sign}{\mathop{\rm sign\,}\limits}
+
+\newcommand{\dom}{\mathop{\mathrm{\bf dom}}\nolimits}
+\newcommand{\minimize}{\mathop{\mathrm{\rm minimize}}\limits}
+\newcommand{\maximize}{\mathop{\mathrm{\rm maximize}}\limits}
+
+\newcommand{\prox}{\mathop{\mathrm{\rm Prox}}\limits}
+
+\title{2012年度金融リスクマネジメント・第一回レポート}
+\author{12M42340　チョウ　シホウ}
+\date{}
+
+\begin{document}
+\pagenumbering{roman}
+%\tableofcontents
+%\cleardoublepage
+\pagenumbering{arabic}
+\renewcommand{\thepart}{\arabic{part}}
+
+\maketitle
+
+\section{問題1}
+$RFS(t,\tau,S_{\alpha,\beta}(t))=0$となる様な$S_{\alpha,\beta}(t)$を定義する．
+\begin{equation}
+S_{\alpha,\beta}(t) = \frac{P(t,T_{\alpha})-P(t,T_{\beta})}{\sum_{i=\alpha}^{\beta-1} (T_{i+1}-T_{i})P(t,T_{i+1})}
+\end{equation}
+
+European Payer Swaptionとは，所有者が固定金利払い、変動金利受けのスワップ取引を行う権利である．
+
+$T_{\alpha}$に於ける，Payer-Swapの価値は
+\begin{eqnarray}
+&&\sum_{i=\alpha}^{\beta+1} P(t,T_{i+1})(T_{i+1} - T_{i})(L(t,T_i)-K)\\
+&=& (S_{\alpha,\beta}(t)-K) \sum_{i=\alpha}^{\beta+1} (T_{i+1} - T_{i})P(t,T_{i+1})\label{PSVALUE}
+\end{eqnarray}
+なお，
+\[
+\sum_{i=\alpha}^{\beta+1} (T_{i+1} - T_{i})P(t,T_{i+1}) \ge 0
+\]
+が成り立つので，\eqref{PSVALUE}の値の正負が$(S_{\alpha,\beta}(t)-K)$によって決める．$(S_{\alpha,\beta}(t)-K)>0$の時，権利を行使すれば，収益が正，$(S_{\alpha,\beta}(t)-K)<0$の時，権利を行使すれば，収益が負．
+所有者は権利を行うかどうか選ばれるので，
+\[
+\begin{cases}
+S_{\alpha,\beta}(T_{\alpha}) - K >0 & \text{権利を行使}\\
+S_{\alpha,\beta}(T_{\alpha}) - K >0 & \text{何でもしない}
+\end{cases}
+\]
+という行動をとる．
+\newpage
+
+\section{問題2}
+\begin{proof}
+$f:\mathbb{R}\times\mathbb{R}^d \to \mathbb{R}:C^2\text{-function},B(t)=(B^1(t),\dots,B^d(t))$に対して，過程$f(t,B(t))=f(t,B^1(t),\dots,B^d(t))$をito-formulaで求め，微分形式で表す．ただし，$B(t)=(x^{(1)},\dots,x^{(d)})(t)$．
+\begin{equation}
+df(t,B(t)) = \frac{\partial f}{\partial t} dt + \sum_{i=1}^d \frac{\partial f}{\partial x^{(i)}} d B^{(i)}(t) + \frac{1}{2}\sum_{i=1,j=1}^d \frac{\partial^2 f}{\partial x^{(i)} \partial x^{(j)}} d \langle x^{(i)}, x^{(j)}\rangle (t)
+\label{BITO}
+\end{equation}
+$B(t)$はBrownian motionであるので，
+\[
+\langle x^{(i)}, x^{(j)}\rangle (t) = \begin{cases}
+0 & i \neq j\\
+t & i = j
+\end{cases}
+\]
+式\eqref{BITO}に代入すると，
+\begin{equation}
+df(t,B(t)) = \Bigr( \frac{\partial f}{\partial t}+ \frac{1}{2}\sum_{i=1}^d \frac{\partial^2 f}{\partial (x^{(i)})^2} \Bigr)dt +  \sum_{i=1}^d \frac{\partial f}{\partial x^{(i)}} d B^{(i)}(t)
+\label{BITO2}
+\end{equation}
+式\eqref{BITO2}を両辺積分を取る．
+\begin{equation}
+f(t,B(t)) = f(0,B(i)) + \int_0^t \Bigr( \frac{\partial f}{\partial t}+ \frac{1}{2}\sum_{i=1}^d \frac{\partial^2 f}{\partial (x^{(i)})^2} \Bigr)dt + \sum_{i=1}^d \int_0^t  \frac{\partial f}{\partial x^{(i)}} d B^{(i)}(t)
+\label{BITO3}
+\end{equation}
+式\eqref{BITO3}の右辺第三項を$H(s)$とおくと
+\begin{equation}
+H(s) = \frac{\partial f}{\partial s}+ \frac{1}{2}\sum_{i=1}^d \frac{\partial^2 f}{\partial (x^{(i)})^2}
+\end{equation}
+明らかに，次の式と同じ形式である．
+\begin{equation}
+X(t) = X(0) + \int_0^t H(s)ds + \sum_{i=1}^d \int_0^t K_i(s)dB^{(i)}(s)
+\end{equation}
+命題2.10.1より，$H(s)=0$ので，
+\begin{equation}
+H(s) = \frac{\partial f}{\partial s}+ \frac{1}{2}\sum_{i=1}^d \frac{\partial^2 f}{\partial (x^{(i)})^2} = 0
+\end{equation}
+\end{proof}
+
+\end{document}

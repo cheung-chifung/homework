@@ -1,0 +1,164 @@
+\documentclass[a4paper,11pt]{jsarticle}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{amssymb}
+\usepackage{ascmac}
+\usepackage{subfigure}
+\usepackage{bm}
+\usepackage{setspace}
+\usepackage{cases}%左かっこつけるときに必要だった
+\usepackage{leftidx}%行列表示用？
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{url}
+\usepackage{bm}
+\usepackage{verbatim}
+\usepackage{calc} 
+
+\setlength{\headsep}{5mm}
+\setlength{\oddsidemargin}{-0.5zw} %→にズラす
+\setlength{\textheight}{37\baselineskip}
+\addtolength{\textheight}{\topskip}
+\setlength{\topmargin}{-10mm}
+\setlength{\textwidth}{45zw} %文章の幅
+\setlength{\textheight}{215mm}
+\setlength{\parindent}{1zw}%箇条書きの一文字下げ
+\pagestyle{fancy}
+
+\newtheorem{theorem}{定理}
+\newtheorem{prop}[theorem]{命題}
+\newtheorem{lemma}[theorem]{補題}
+\newtheorem{cor}[theorem]{系}
+\newtheorem{example}[theorem]{例}
+\newtheorem{definition}[theorem]{定義}
+\newtheorem{rem}[theorem]{注意}
+\newtheorem{guide}[theorem]{参考}
+\renewcommand{\proofname}{証明}
+
+\numberwithin{theorem}{section}  % 定理番号を「定理2.3」のように印刷
+\numberwithin{equation}{section} % 式番号を「(3.5)」のように印刷
+\newcommand{\argmax}{\mathop{\rm arg~max\,}\limits}
+\newcommand{\argmin}{\mathop{\rm arg~min\,}\limits}
+\newcommand{\st}{\mathop{\rm subject~to\,}\limits}
+\newcommand{\sign}{\mathop{\rm sign\,}\limits}
+
+\newcommand{\dom}{\mathop{\mathrm{\bf dom}}\nolimits}
+\newcommand{\minimize}{\mathop{\mathrm{\rm minimize}}\limits}
+\newcommand{\maximize}{\mathop{\mathrm{\rm maximize}}\limits}
+
+\newcommand{\prox}{\mathop{\mathrm{\rm Prox}}\limits}
+
+\title{2012年度金融リスクマネジメント・第二回レポート}
+\author{12M42340　チョウ　シホウ}
+\date{}
+
+\begin{document}
+\pagenumbering{roman}
+%\tableofcontents
+%\cleardoublepage
+\pagenumbering{arabic}
+\renewcommand{\thepart}{\arabic{part}}
+
+\maketitle
+\begin{itembox}[l]{問題１}
+\[
+\alpha (t,T) = v_T(t,T)v(t,T)-m_T(t,T)\,\,\,\,\,\,
+\sigma(t,T) + v_T(t,T) = 0
+\]を証明する
+\end{itembox}
+下記の記号を定める
+\[
+\begin{cases}
+B(t)=(B_1(t),\dots,B_N(t))^\intercal \\
+v(t,T)=(v_1(t,T),\dots,v_N(t,T))^\intercal \\
+b(t)=(b_1(t),\dots,b_N(t))^\intercal \\
+\sigma(t,T) = (\sigma_1(t,T),\dots,\sigma_N(t,T))^\intercal\\
+\end{cases}
+\]
+よって，zero-coupon bondの価格
+\[
+P(t,T) = P(0,T) + \int_0^t P(s,T)m(s,T)ds + \int_0^t P(s,T)v(s,T)dB(s)
+\]にItoの公式を適用すると，
+\[
+d P(t,T) = P(s,T)m(s,T)ds + P(s,T)v(s,T)dB(s)
+\]
+一方，$F(P(t,T))=\log P(t,T)$に定め，$F(P(t,T))$に対してItoの補題を適用する
+\begin{eqnarray*}
+dF( P(t,T))
+&=& \frac{1}{P(t,T)} dP(t,T)\\
+&=& m(s,T)ds +  v(s,T)dB(s) - \frac{1}{2}v(t,T)^\intercal v(t,T) d\langle B^2\rangle(s) \\
+&=& \Bigr[ m(s,T) - \frac{1}{2}v(t,T)^\intercal v(t,T) \Bigr] ds + v(s,T)dB(s)
+\end{eqnarray*}
+
+\[
+\log P(t,T) = \log P(0,T) + \int_0^t\Bigr[ m(s,T) - \frac{1}{2}v(t,T)^\intercal v(t,T) \Bigr] ds + \int_0^t v(s,T)dB(s)
+\]
+
+よって，
+\begin{eqnarray*}
+f(t,T) &=& - \frac{\partial \log P(t,T)}{\partial T}\\
+&=&  - \frac{\partial \log P(0,T)}{\partial T} + \int_0^t  \Bigr[\frac{\partial v(t,T)}{\partial T} v(t,T) -\frac{\partial m(s,T)}{\partial T}\Bigr] ds -  \int_0^t \frac{\partial v(s,T)}{\partial T} d B(s)\\
+&=& f(0,T)+ \int_0^t \alpha(t,T) ds + \int_0^t \sigma(t,T) dB(s)
+\end{eqnarray*}
+従って，
+\[
+\alpha (t,T) = v_T(t,T)v(t,T)-m_T(t,T)\,\,\, \sigma(t,T) + v_T(t,T) = 0
+\]
+
+
+\begin{itembox}[l]{問題２}
+(4)を証明せよ．
+\end{itembox}
+
+一次元Ito process$X(t),X(x)=0$に対し，$\mathcal{E}(X)(t):=\exp(X(t)-\frac{1}{2}\langle X\rangle(t))$によってIto process\,\,$\mathcal{E}(X)$を定義する．\\
+また，$Z(t) := X(t) - \frac{1}{2}(t),\,\,\,f(x)=\exp(x)$として，Ito formulaを適用する：
+\begin{eqnarray*}
+\mathcal{E}(X)(t)&=&f(Z(t))  \,\,\,\,\text{（伊藤公式より）}\\
+&=&f(Z(0)) + \int_0^t(\frac{df}{dx})(Z(s))dZ(s) + \frac{1}{2}\int_0^t (\frac{d^2f}{dx^2})(Z(s))d\langle Z \rangle (s)
+\end{eqnarray*}
+一方，$f(Z(0))=f(x_0)=e^{x_0},\frac{df}{dx}=\exp(x)\,\,\, \frac{d^2f}{dx^2}=\exp(x)$，
+\begin{eqnarray*}
+d\langle Z \rangle(s) &=& d\Bigr\langle X(\cdot) - \frac{1}{2}\langle X \rangle(\cdot) \Bigr\rangle(s)\\
+&=& d\Bigr\langle X(\cdot) - \frac{1}{2}\langle X \rangle(\cdot), X(\cdot) - \frac{1}{2}\langle X \rangle(\cdot) \Bigr\rangle(s)\\
+&=& d\Bigr(
+\langle X,X \rangle (s) - \frac{1}{2}\langle \langle X \rangle(\cdot), X \rangle(s) - \frac{1}{2}\langle X, \langle X \rangle(\cdot) \rangle(s) + \frac{1}{4}\langle \langle X \rangle(\cdot), \langle X \rangle(\cdot) \rangle(s) \Bigr)\\
+&=& d\langle X,X \rangle(s)\\
+&=& d\langle X \rangle(s)
+\end{eqnarray*}
+以上より，
+\begin{eqnarray*}
+\mathcal{E}(X)(t)&=& e^{x_0} + \int_0^t \exp(Z(s))(dX(s) - \frac{1}{2}d\langle X \rangle(s)) + \frac{1}{2}\int_0^t \exp(Z(s))d\langle X \rangle(s) \\
+&=& e^{x_0} + \int_0^t \exp(Z(s))dX(s)\\
+&=& e^{x_0} + \int_0^t \mathcal{E}(s)dX(s)
+\end{eqnarray*}
+$x_0=0$ので，$\mathcal{E}(X)(t) = \int_0^t \mathcal{E}(X)(s)dX(s) +1$\\
+また，\[\alpha(t) := (\mu_t^S(X(t)) -\mu_t^U(X(t)))^\intercal \cdot {(\sigma_t(X(t)))^{-1}}^\intercal\]
+\[
+X(t):=\int_0^t \alpha(s) d B_U(s)
+\]と置いてやると，
+\begin{eqnarray*}
+\mathcal{E}(X)(t) &=& \mathcal{E}(\int_0^t \alpha(s) d B_U(s) )\\
+&=& \exp (\int_0^t\alpha(s)dB_U(S) - \frac{1}{2}\langle X \rangle(t))\\
+&=& \exp (\int_0^t(\mu_t^S(X(t)) -\mu_t^U(X(t)))^\intercal \cdot {(\sigma_t(X(t)))^{-1}}^\intercal dB_U(S) - \frac{1}{2}\langle X \rangle(t))\\
+\end{eqnarray*}
+一方，$\langle X \rangle(t) = \langle X, X \rangle(t) = \int_0^t (K^X(s))^2 ds = \int_0^t \alpha(s)^2 dS$\\
+\[
+\xi(t) = \mathcal{E}(X)(t) =  \xi(0) + \int_0^t \xi(s)dX(s) =  \xi(0) + \int_0^t \alpha(s)\xi(s)dB_U(s)
+\]
+
+\begin{itembox}[l]{問題３}
+定理3.1.2より，$T$-claim $H$の価格は$\pi_t(H) = P(t,T)E^{Q^T}[H|\mathcal{F}_t]$で与えられる，この事を証明せよ．
+\end{itembox}
+
+ここで，$P(t,T)$は時刻$t$における満期は$T$のzero-coupon bondの価格である．Numeraireを$N$とするとき，一般価格公式は
+\[
+\pi_t(H) = N(t)E^{Q^N}[\frac{H}{N(T)}|\mathcal{F}_t]
+\]
+であるので，満期$T$の時，$N(t)=P(t,T),N(T)=P(T,T)=1$を代入すると
+\[
+\pi_t(H) = N(t)E^{Q^T}[\frac{H}{N(T)}|\mathcal{F}_t] = P(t,T)E^{Q^T}[H|\mathcal{F}_t]
+\]
+\end{document}
