@@ -48,8 +48,8 @@ public class Plane extends Object3D{
                     GL.GL_STATIC_DRAW);
     gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
 
-    img = new ImageLoader("circles.png");
-    //img = new DotImage(512, 512);
+    //img = new ImageLoader("circles.png");
+    img = new DotImage(512, 512);
     gl.glGenTextures(1, tmp, 0);
     TextureName = tmp[0];
     gl.glActiveTexture(GL.GL_TEXTURE0);
